@@ -62,7 +62,7 @@ LL MOD_EXPO(LL b, LL p, LL m)
 LL POWER(LL N, LL K)
 {
     LL i,ans=1;
-    for(i=1; i<=K; i++) ans*=N;
+    for(i=1;i<=K;i++) ans*=N;
     return ans;
 }
 int SET(int N, int pos)
@@ -97,40 +97,43 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],sum[mx+5],total,cap_sum[mx+5];
-bool capital[mx+5];
+LL n,a[mx+5];
+
+LL BS(LL low, LL high, LL val)
+{
+    LL mid,ans;
+    ans=-1;
+    while(low<=high)
+    {
+        mid=(low+high)/2;
+        if(a[mid]<=val)
+        {
+            ans=mid;
+            low=mid+1;
+        }
+        else
+        {
+            high=mid-1;
+        }
+    }
+    return ans;
+}
 
 int main()
 {
-    LL i,n,k,j,ans;
-    cin>>n>>k;
-    sum[0]=0;
-    for(i=1; i<=n; i++)
+    LL i,cnt,q,val;
+    while(cin>>n)
     {
-        clin(a[i]);
-        sum[i]=sum[i-1]+a[i];
-    }
-    for(i=1; i<=k; i++)
-    {
-        clin(j);
-        capital[j]=true;
-    }
-    ans=0;
-    for(i=1; i<=n; i++)
-    {
-        ans+=(sum[n]-sum[i])*a[i];
-    }
-    cap_sum[0]=0;
-    for(i=1; i<=n; i++)
-    {
-        cap_sum[i]=cap_sum[i-1];
-        if(!capital[i])
+        for(i=0;i<n;i++) clin(a[i]);
+        clin(q);
+        sort(a,a+n);
+        cnt=0;
+        while(q--)
         {
-            ans-=cap_sum[(i<2)?0:i-2]*a[i];
-            cap_sum[i]+=a[i];
+            clin(val);
+            cnt=BS(0,n-1,val)+1;
+            printf("%lld\n",cnt);
         }
     }
-    if(!capital[n] && !capital[1]) ans+=a[1]*a[n];
-    pr1(ans);
     return 0;
 }

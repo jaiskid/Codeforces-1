@@ -93,44 +93,49 @@ int dky8[]= {2,2,-2,-2,1,-1,1,-1};
 int tc=1;
 const double eps=1e-9;
 const double pi=acos(-1.0);
-const long long int mx=1e5;
+const long long int mx=5e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],sum[mx+5],total,cap_sum[mx+5];
-bool capital[mx+5];
+int a[mx+5];
+int n;
 
 int main()
 {
-    LL i,n,k,j,ans;
-    cin>>n>>k;
-    sum[0]=0;
-    for(i=1; i<=n; i++)
+    int i,cnt,ans,k,l,r,j;
+    bool flag;
+    while(cin>>n)
     {
-        clin(a[i]);
-        sum[i]=sum[i-1]+a[i];
-    }
-    for(i=1; i<=k; i++)
-    {
-        clin(j);
-        capital[j]=true;
-    }
-    ans=0;
-    for(i=1; i<=n; i++)
-    {
-        ans+=(sum[n]-sum[i])*a[i];
-    }
-    cap_sum[0]=0;
-    for(i=1; i<=n; i++)
-    {
-        cap_sum[i]=cap_sum[i-1];
-        if(!capital[i])
+        for(i=1; i<=n; i++) iin(a[i]);
+        ans=0;
+        i=1;
+        while(i<=n)
         {
-            ans-=cap_sum[(i<2)?0:i-2]*a[i];
-            cap_sum[i]+=a[i];
+            flag=a[i];
+            cnt=0;
+            k=i;
+            l=a[i];
+            while(i<=n && a[i]==flag)
+            {
+                flag=!flag;
+                cnt++;
+                i++;
+            }
+            r=a[i-1];
+            if(l==r)
+            {
+                for(j=k; j<i; j++) a[j]=l;
+            }
+            else
+            {
+                for(j=k; j<k+cnt/2; j++) a[j]=l;
+                for(j=k+cnt/2; j<k+cnt; j++) a[j]=r;
+            }
+            ans=max(ans,(cnt+1)/2-1);
         }
+        pr1(ans);
+        for(i=1;i<=n;i++) printf("%d ",a[i]);
+        nl;
     }
-    if(!capital[n] && !capital[1]) ans+=a[1]*a[n];
-    pr1(ans);
     return 0;
 }

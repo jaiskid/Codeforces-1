@@ -73,7 +73,7 @@ int RESET(int N, int pos)
 {
     return (N & !(1<<pos));
 }
-int CHECK(int N, int pos)
+bool CHECK(int N, int pos)
 {
     return (N & (1<<pos));
 }
@@ -97,40 +97,49 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],sum[mx+5],total,cap_sum[mx+5];
-bool capital[mx+5];
+LL a[mx+5],n,x;
+vll left__,right__;
+LL left_sum,right_sum;
 
 int main()
 {
-    LL i,n,k,j,ans;
-    cin>>n>>k;
-    sum[0]=0;
-    for(i=1; i<=n; i++)
+    LL i,ans,cnt,l,r;
+    while(cin>>n>>x)
     {
-        clin(a[i]);
-        sum[i]=sum[i-1]+a[i];
-    }
-    for(i=1; i<=k; i++)
-    {
-        clin(j);
-        capital[j]=true;
-    }
-    ans=0;
-    for(i=1; i<=n; i++)
-    {
-        ans+=(sum[n]-sum[i])*a[i];
-    }
-    cap_sum[0]=0;
-    for(i=1; i<=n; i++)
-    {
-        cap_sum[i]=cap_sum[i-1];
-        if(!capital[i])
+        left_sum=right_sum=0;
+        cnt=0;
+        for(i=0; i<n; i++)
         {
-            ans-=cap_sum[(i<2)?0:i-2]*a[i];
-            cap_sum[i]+=a[i];
+            clin(a[i]);
+            if(a[i]>x) right__.pb(abs(a[i]-x));
+            if(a[i]<x) left__.pb(abs(x-a[i]));
+            if(a[i]==x) cnt++;
         }
+        sort(left__.begin(),left__.end());
+        sort(right__.begin(),right__.end());
+        ans=1e18;
+        if(left__.size()>1 && right__.size()>1)
+        {
+            ans=min(ans,abs(right__[right__.size()-1])*2+abs(left__[left__.size()-2]));
+            ans=min(ans,abs(right__[right__.size()-1])+abs(left__[left__.size()-2])*2);
+            ans=min(ans,abs(right__[right__.size()-2])+abs(left__[left__.size()-1]*2));
+            ans=min(ans,abs(right__[right__.size()-2])*2+abs(left__[left__.size()-1]));
+        }
+        if(left__.size()<=1 && right__.size())
+        {
+            if(right__.size()>1) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
+            if(right__.size()) ans=min(ans,right__[right__.size()-1]);
+        }
+        if(right__.size()<=1 && left__.size())
+        {
+            if(left__.size()>1) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
+            if(left__.size()) ans=min(ans,left__[left__.size()-1]);
+        }
+        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
+        {
+            ans=0;
+        }
+        pr1(ans);
     }
-    if(!capital[n] && !capital[1]) ans+=a[1]*a[n];
-    pr1(ans);
     return 0;
 }

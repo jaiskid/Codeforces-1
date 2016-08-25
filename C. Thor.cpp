@@ -93,44 +93,50 @@ int dky8[]= {2,2,-2,-2,1,-1,1,-1};
 int tc=1;
 const double eps=1e-9;
 const double pi=acos(-1.0);
-const long long int mx=1e5;
+const long long int mx=3e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],sum[mx+5],total,cap_sum[mx+5];
-bool capital[mx+5];
+vll index[mx+5];
+set<LL>S;
+LL n,q;
 
 int main()
 {
-    LL i,n,k,j,ans;
-    cin>>n>>k;
-    sum[0]=0;
-    for(i=1; i<=n; i++)
+    LL i,type,x,j,k,cnt;
+    cin>>n>>q;
+    cnt=0;
+    for(i=1; i<=q; i++)
     {
-        clin(a[i]);
-        sum[i]=sum[i-1]+a[i];
-    }
-    for(i=1; i<=k; i++)
-    {
-        clin(j);
-        capital[j]=true;
-    }
-    ans=0;
-    for(i=1; i<=n; i++)
-    {
-        ans+=(sum[n]-sum[i])*a[i];
-    }
-    cap_sum[0]=0;
-    for(i=1; i<=n; i++)
-    {
-        cap_sum[i]=cap_sum[i-1];
-        if(!capital[i])
+        clin(type);
+        if(type==1)
         {
-            ans-=cap_sum[(i<2)?0:i-2]*a[i];
-            cap_sum[i]+=a[i];
+            clin(x);
+            cnt++;
+            S.insert(cnt);
+            index[x].pb(cnt);
         }
+        if(type==2)
+        {
+            clin(x);
+            while(!index[x].empty())
+            {
+                j=index[x].size()-1;
+                k=index[x][j];
+                S.erase(k);
+                index[x].pop_back();
+            }
+        }
+        if(type==3)
+        {
+            clin(x);
+            while(S.size() && *S.begin()<=x)
+            {
+                S.erase(S.begin());
+            }
+        }
+        x=S.size();
+        printf("%I64d\n",x);
     }
-    if(!capital[n] && !capital[1]) ans+=a[1]*a[n];
-    pr1(ans);
     return 0;
 }

@@ -73,7 +73,7 @@ int RESET(int N, int pos)
 {
     return (N & !(1<<pos));
 }
-int CHECK(int N, int pos)
+bool CHECK(int N, int pos)
 {
     return (N & (1<<pos));
 }
@@ -97,40 +97,32 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],sum[mx+5],total,cap_sum[mx+5];
-bool capital[mx+5];
+char str[mx+5];
+
+char prev_char(char ch)
+{
+    if(ch=='a') return 'z';
+    return (ch-1);
+}
 
 int main()
 {
-    LL i,n,k,j,ans;
-    cin>>n>>k;
-    sum[0]=0;
-    for(i=1; i<=n; i++)
+    int i,n;
+    bool flag;
+    while(scanf("%s",str)!=EOF)
     {
-        clin(a[i]);
-        sum[i]=sum[i-1]+a[i];
-    }
-    for(i=1; i<=k; i++)
-    {
-        clin(j);
-        capital[j]=true;
-    }
-    ans=0;
-    for(i=1; i<=n; i++)
-    {
-        ans+=(sum[n]-sum[i])*a[i];
-    }
-    cap_sum[0]=0;
-    for(i=1; i<=n; i++)
-    {
-        cap_sum[i]=cap_sum[i-1];
-        if(!capital[i])
+        n=strlen(str);
+        i=0;
+        flag=false;
+        while(i<n && str[i]=='a') i++;
+        while(i<n && str[i]!='a')
         {
-            ans-=cap_sum[(i<2)?0:i-2]*a[i];
-            cap_sum[i]+=a[i];
+            str[i]=prev_char(str[i]);
+            i++;
+            flag=true;
         }
+        if(!flag) str[n-1]=prev_char(str[n-1]);
+        printf("%s\n",str);
     }
-    if(!capital[n] && !capital[1]) ans+=a[1]*a[n];
-    pr1(ans);
     return 0;
 }

@@ -62,7 +62,7 @@ LL MOD_EXPO(LL b, LL p, LL m)
 LL POWER(LL N, LL K)
 {
     LL i,ans=1;
-    for(i=1; i<=K; i++) ans*=N;
+    for(i=1;i<=K;i++) ans*=N;
     return ans;
 }
 int SET(int N, int pos)
@@ -97,40 +97,28 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],sum[mx+5],total,cap_sum[mx+5];
-bool capital[mx+5];
+double a,b,x,y,ans,cnt,v;
+
+double dist(double x1, double y1, double x2, double y2)
+{
+    double ans;
+    ans=(x1-x2)*(x1-x2)+(y1-y2)*(y1-y2);
+    return sqrt(ans);
+}
 
 int main()
 {
-    LL i,n,k,j,ans;
-    cin>>n>>k;
-    sum[0]=0;
-    for(i=1; i<=n; i++)
+    int n,i;
+    while(cin>>a>>b>>n)
     {
-        clin(a[i]);
-        sum[i]=sum[i-1]+a[i];
-    }
-    for(i=1; i<=k; i++)
-    {
-        clin(j);
-        capital[j]=true;
-    }
-    ans=0;
-    for(i=1; i<=n; i++)
-    {
-        ans+=(sum[n]-sum[i])*a[i];
-    }
-    cap_sum[0]=0;
-    for(i=1; i<=n; i++)
-    {
-        cap_sum[i]=cap_sum[i-1];
-        if(!capital[i])
+        ans=INT_MAX;
+        for(i=0;i<n;i++)
         {
-            ans-=cap_sum[(i<2)?0:i-2]*a[i];
-            cap_sum[i]+=a[i];
+            cin>>x>>y>>v;
+            cnt=dist(a,b,x,y)/v;
+            ans=min(ans,cnt);
         }
+        printf("%.10lf\n",ans);
     }
-    if(!capital[n] && !capital[1]) ans+=a[1]*a[n];
-    pr1(ans);
     return 0;
 }

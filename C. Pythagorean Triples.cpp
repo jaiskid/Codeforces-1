@@ -73,7 +73,7 @@ int RESET(int N, int pos)
 {
     return (N & !(1<<pos));
 }
-int CHECK(int N, int pos)
+bool CHECK(int N, int pos)
 {
     return (N & (1<<pos));
 }
@@ -97,40 +97,49 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],sum[mx+5],total,cap_sum[mx+5];
-bool capital[mx+5];
-
 int main()
 {
-    LL i,n,k,j,ans;
-    cin>>n>>k;
-    sum[0]=0;
-    for(i=1; i<=n; i++)
+    LL a,b,c,m,n;
+    while(cin>>n)
     {
-        clin(a[i]);
-        sum[i]=sum[i-1]+a[i];
-    }
-    for(i=1; i<=k; i++)
-    {
-        clin(j);
-        capital[j]=true;
-    }
-    ans=0;
-    for(i=1; i<=n; i++)
-    {
-        ans+=(sum[n]-sum[i])*a[i];
-    }
-    cap_sum[0]=0;
-    for(i=1; i<=n; i++)
-    {
-        cap_sum[i]=cap_sum[i-1];
-        if(!capital[i])
+        if(n<3)
         {
-            ans-=cap_sum[(i<2)?0:i-2]*a[i];
-            cap_sum[i]+=a[i];
+            pr1(-1);
+            continue;
         }
+        if(n==4)
+        {
+            pr2(3,5);
+            continue;
+        }
+        if(n%2)
+        {
+            a=n;
+            b=(a*a-1)/2;
+            c=b+1;
+        }
+        else
+        {
+            if(n%4==0)
+            {
+                a=n;
+                b=a*(n/4)-1;
+                c=a*(n/4)+1;
+            }
+            else
+            {
+                m=n;
+                while(n%2==0) n/=2;
+                a=n;
+                b=(a*a-1)/2;
+                c=b+1;
+
+                a=a*(m/n);
+                b=b*(m/n);
+                c=c*(m/n);
+            }
+        }
+        pr2(b,c);
     }
-    if(!capital[n] && !capital[1]) ans+=a[1]*a[n];
-    pr1(ans);
     return 0;
 }

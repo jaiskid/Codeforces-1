@@ -73,7 +73,7 @@ int RESET(int N, int pos)
 {
     return (N & !(1<<pos));
 }
-int CHECK(int N, int pos)
+bool CHECK(int N, int pos)
 {
     return (N & (1<<pos));
 }
@@ -97,40 +97,95 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],sum[mx+5],total,cap_sum[mx+5];
-bool capital[mx+5];
+struct node
+{
+    int count[2+2];
+    node *arr[2+2];
+    node()
+    {
+        for(int i=0; i<2; i++)
+        {
+            arr[i]=NULL;
+            count[i]=0;
+        }
+    }
+};
+
+node *root;
+
+void insert_node(int x)
+{
+    int i,id;
+    node *cur=root;
+    for(i=31; i>=0; i--)
+    {
+        id=CHECK(x,i);
+        if(cur->arr[id]==NULL) cur->arr[id]=new node();
+        cur->count[id]++;
+        cur=cur->arr[id];
+    }
+    return;
+}
+
+int search_node(int x)
+{
+    int i,ans,id;
+    node *cur=root;
+    ans=0;
+    for(i=31; i>=0; i--)
+    {
+        id=CHECK(x,i);
+        if(cur->arr[!id]!=NULL && cur->count[!id]>0)
+        {
+            ans=SET(ans,i);
+            cur=cur->arr[!id];
+        }
+        else
+        {
+            cur=cur->arr[id];
+        }
+    }
+    return ans;
+}
+
+void delete_tree(node *cur)
+{
+    int i;
+    for(i=0; i<2; i++)
+    {
+        if(cur->arr[i]) delete_tree(cur->arr[i]);
+    }
+    delete cur;
+    return;
+}
+
+void delete_node(int x)
+{
+    int i,id;
+    node *cur=root;
+    for(i=31; i>=0; i--)
+    {
+        id=CHECK(x,i);
+        cur->count[id]--;
+        cur=cur->arr[id];
+    }
+    return;
+}
 
 int main()
 {
-    LL i,n,k,j,ans;
-    cin>>n>>k;
-    sum[0]=0;
-    for(i=1; i<=n; i++)
+    int q,x;
+    char str[10];
+    root=new node();
+    insert_node(0);
+    cin>>q;
+    while(q--)
     {
-        clin(a[i]);
-        sum[i]=sum[i-1]+a[i];
+        scanf("%s %d",str,&x);
+        if(str[0]=='+') insert_node(x);
+        if(str[0]=='-') delete_node(x);
+        if(str[0]=='?') printf("%d\n",search_node(x));
     }
-    for(i=1; i<=k; i++)
-    {
-        clin(j);
-        capital[j]=true;
-    }
-    ans=0;
-    for(i=1; i<=n; i++)
-    {
-        ans+=(sum[n]-sum[i])*a[i];
-    }
-    cap_sum[0]=0;
-    for(i=1; i<=n; i++)
-    {
-        cap_sum[i]=cap_sum[i-1];
-        if(!capital[i])
-        {
-            ans-=cap_sum[(i<2)?0:i-2]*a[i];
-            cap_sum[i]+=a[i];
-        }
-    }
-    if(!capital[n] && !capital[1]) ans+=a[1]*a[n];
-    pr1(ans);
+    delete_tree(root);
     return 0;
 }

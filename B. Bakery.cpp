@@ -73,7 +73,7 @@ int RESET(int N, int pos)
 {
     return (N & !(1<<pos));
 }
-int CHECK(int N, int pos)
+bool CHECK(int N, int pos)
 {
     return (N & (1<<pos));
 }
@@ -97,40 +97,43 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],sum[mx+5],total,cap_sum[mx+5];
-bool capital[mx+5];
+vll adjacent[mx+5];
+vll cost[mx+5];
+LL n,m,k;
+LL storages[mx+5];
+bool flag[mx+5];
 
 int main()
 {
-    LL i,n,k,j,ans;
-    cin>>n>>k;
-    sum[0]=0;
-    for(i=1; i<=n; i++)
+    LL a,b,c,i,j,ans;
+    cin>>n>>m>>k;
+    for(i=1; i<=m; i++)
     {
-        clin(a[i]);
-        sum[i]=sum[i-1]+a[i];
+        clin(a);
+        clin(b);
+        clin(c);
+        adjacent[a].pb(b);
+        cost[a].pb(c);
+        adjacent[b].pb(a);
+        cost[b].pb(c);
+    }
+    ans=INT_MAX;
+    for(i=1; i<=k; i++)
+    {
+        clin(storages[i]);
+        flag[storages[i]]=1;
     }
     for(i=1; i<=k; i++)
     {
-        clin(j);
-        capital[j]=true;
-    }
-    ans=0;
-    for(i=1; i<=n; i++)
-    {
-        ans+=(sum[n]-sum[i])*a[i];
-    }
-    cap_sum[0]=0;
-    for(i=1; i<=n; i++)
-    {
-        cap_sum[i]=cap_sum[i-1];
-        if(!capital[i])
+        a=storages[i];
+        for(b=0; b<adjacent[a].size(); b++)
         {
-            ans-=cap_sum[(i<2)?0:i-2]*a[i];
-            cap_sum[i]+=a[i];
+            c=adjacent[a][b];
+            if(flag[c]) continue;
+            ans=min(ans,cost[a][b]);
         }
     }
-    if(!capital[n] && !capital[1]) ans+=a[1]*a[n];
+    if(ans==INT_MAX) ans=-1;
     pr1(ans);
     return 0;
 }

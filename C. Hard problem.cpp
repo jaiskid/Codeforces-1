@@ -97,40 +97,42 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],sum[mx+5],total,cap_sum[mx+5];
-bool capital[mx+5];
+string str[mx+5];
+string rev[mx+5];
+char input[mx+5];
+int n,cost[mx+5];
+LL dp[mx+5][2+5];
 
 int main()
 {
-    LL i,n,k,j,ans;
-    cin>>n>>k;
-    sum[0]=0;
-    for(i=1; i<=n; i++)
+    LL i,cnt,ans,maxi=1e15;
+    string aaa,bbb;
+    while(cin>>n)
     {
-        clin(a[i]);
-        sum[i]=sum[i-1]+a[i];
-    }
-    for(i=1; i<=k; i++)
-    {
-        clin(j);
-        capital[j]=true;
-    }
-    ans=0;
-    for(i=1; i<=n; i++)
-    {
-        ans+=(sum[n]-sum[i])*a[i];
-    }
-    cap_sum[0]=0;
-    for(i=1; i<=n; i++)
-    {
-        cap_sum[i]=cap_sum[i-1];
-        if(!capital[i])
+        for(i=1; i<=n; i++) iin(cost[i]);
+        aaa=bbb="";
+        dp[0][0]=dp[0][1]=0;
+        for(i=1; i<=n; i++)
         {
-            ans-=cap_sum[(i<2)?0:i-2]*a[i];
-            cap_sum[i]+=a[i];
+            scanf("%s",input);
+            str[i]=input;
+            rev[i]=input;
+            reverse(rev[i].begin(),rev[i].end());
+
+            dp[i][0]=dp[i][1]=maxi;
+
+            if(aaa<=str[i]) dp[i][0]=min(dp[i][0],dp[i-1][0]);
+            if(bbb<=str[i]) dp[i][0]=min(dp[i][0],dp[i-1][1]);
+
+            if(aaa<=rev[i]) dp[i][1]=min(dp[i][1],dp[i-1][0]+cost[i]);
+            if(bbb<=rev[i]) dp[i][1]=min(dp[i][1],dp[i-1][1]+cost[i]);
+
+            aaa=str[i];
+            bbb=rev[i];
         }
+        cnt=min(dp[n][0],dp[n][1]);
+        if(cnt==maxi) cnt=-1;
+        pr1(cnt);
     }
-    if(!capital[n] && !capital[1]) ans+=a[1]*a[n];
-    pr1(ans);
     return 0;
 }
