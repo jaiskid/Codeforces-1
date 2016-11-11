@@ -97,47 +97,117 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+struct node
+{
+    int end_mark;
+    node *next[2+2];
+    node()
+    {
+        end_mark=0;
+        for(int i=0; i<2; i++) next[i]=NULL;
+    }
+};
+
+node *root;
+
+void insert_node(string str)
+{
+    int i,id;
+    node *cur=root;
+    for(i=0; i<str.size(); i++)
+    {
+        id=str[i]-'0';
+        if(cur->next[id]==NULL) cur->next[id]=new node();
+        cur=cur->next[id];
+    }
+    cur->end_mark++;
+    return;
+}
+
+int search_node(string str)
+{
+    int i,id;
+    node *cur=root;
+    for(i=0; i<str.size(); i++)
+    {
+        id=str[i]-'0';
+        if(cur->next[id]==NULL) return 0;
+        cur=cur->next[id];
+    }
+    return cur->end_mark;
+}
+
+void delete_node(string str)
+{
+    int i,id;
+    node *cur=root;
+    for(i=0; i<str.size(); i++)
+    {
+        id=str[i]-'0';
+        cur=cur->next[id];
+    }
+    cur->end_mark--;
+    return;
+}
+
+void delete_tree(node *cur)
+{
+    int i;
+    for(i=0; i<2; i++)
+    {
+        if(cur->next[i]) delete_tree(cur->next[i]);
+    }
+    delete cur;
+}
+
+string process(string str)
+{
+    string ret;
+    int i,j,k;
+    ret="";
+    for(i=0;i<18;i++) ret+="0";
+    for(i=17,j=str.size()-1;j>=0;i--,j--)
+    {
+        k=str[j]-'0';
+        if(k%2) ret[i]='1';
+    }
+    return ret;
+}
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int i,n;
+    char inp[100+5];
+    string str;
+    while(cin>>n)
     {
-        for(i=0; i<n; i++)
+        root=new node();
+        while(n--)
         {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
+            scanf("%s",inp);
+            if(inp[0]=='+')
+            {
+                scanf("%s",inp);
+                str=inp;
+                str=process(str);
+                insert_node(str);
+            }
+            if(inp[0]=='-')
+            {
+                scanf("%s",inp);
+                str=inp;
+                str=process(str);
+                delete_node(str);
+            }
+            if(inp[0]=='?')
+            {
+                scanf("%s",inp);
+                str=inp;
+                str=process(str);
+                printf("%d\n",search_node(str));
+            }
         }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
-        {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
-        }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
-        pr1(ans);
+        delete_tree(root);
     }
     return 0;
 }

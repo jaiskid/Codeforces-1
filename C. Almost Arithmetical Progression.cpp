@@ -38,6 +38,7 @@
 #define prflag1(flag) printf("%s\n",(flag)?"YES":"NO")
 #define prflag2(flag) printf("%s\n",(flag)?"Yes":"No")
 #define prflag3(flag) printf("%s\n",(flag)?"yes":"no")
+#define forall(i,b)               for(int i=0;i<b;i++)
 /* macro definitions */
 
 using namespace std;
@@ -93,51 +94,30 @@ int dky8[]= {2,2,-2,-2,1,-1,1,-1};
 int tc=1;
 const double eps=1e-9;
 const double pi=acos(-1.0);
-const long long int mx=1e5;
+const long long int mx=4e3;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+int dp[mx+5][mx+5];
+int a[mx+5];
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int n,index;
+    cin >> n;
+    forall(i,n) iin(a[i]);
+    index = 0;
+    map<int,int> mp;
+    forall(i,n) if (mp.find(a[i]) == mp.end()) mp[a[i]] = index++;
+    forall(i,n) a[i] = mp[a[i]];
+
+    forall(i,n) forall(j,n) dp[i][j] = 1;
+    forall(i,n) forall(j,i)
     {
-        for(i=0; i<n; i++)
-        {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
-        }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
-        {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
-        }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
-        pr1(ans);
+        dp[i][a[j]] = max(1 + dp[j][a[i]], dp[i][a[j]]);
     }
+    int ans = 0;
+    forall(i,n) forall(j,n) ans = max(ans, dp[i][j]);
+    pr1(ans);
     return 0;
 }

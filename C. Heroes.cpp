@@ -97,47 +97,76 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+int f( string s )
+{
+    if( s == "Anka" ) return 0;
+    if( s == "Chapay" ) return 1;
+    if( s == "Cleo" ) return 2;
+    if( s == "Troll" ) return 3;
+    if( s == "Dracul" ) return 4;
+    if( s == "Snowy" ) return 5;
+    if( s == "Hexadecimal" ) return 6;
+}
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int n, mas[ 8 ][ 8 ] = {0};
+    string s;
+    cin >> n;
+    for( int i = 0 ; i < n ; i++ )
     {
-        for(i=0; i<n; i++)
-        {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
-        }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
-        {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
-        }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
-        pr1(ans);
+        cin >> s;
+        int x1 = f( s );
+        cin >> s >> s;
+        int x2 = f( s );
+        mas[ x1 ][ x2 ] = 1;
     }
+    int a, b, c, mn = -1, symph;
+    cin >> a >> b >> c;
+    for( int i = 1 ; i < 6 ; i++ )
+        for( int j = 1 ; j < 6 ; j++ )
+            if( i + j < 7 )
+            {
+                int ma[ 8 ];
+                for( int k = 0 ; k < 7 ; k++ )
+                    ma[ k ] = k;
+                do
+                {
+                    int op1 = a / i, op2 = b / j, op3 = c / ( 7 - i - j );
+                    int mmx = max( op1, max( op2, op3 ) ), mmn = min( op1, min( op2, op3 ) );
+
+                    if( mn == -1 || ( mmx - mmn < mn ) )
+                    {
+                        mn = mmx - mmn;
+                        symph = 0;
+                        for( int x = 0 ; x < i ; x++ )
+                            for( int y = 0 ; y < i ; y++ )
+                                symph += mas[ ma[x] ][ ma[y] ];
+                        for( int x = i ; x < i + j ; x++ )
+                            for( int y = i ; y < i + j ; y++ )
+                                symph += mas[ ma[x] ][ ma[y] ];
+                        for( int x = i + j ; x < 7 ; x++ )
+                            for( int y = i + j ; y < 7 ; y++ )
+                                symph += mas[ ma[x] ][ ma[y] ];
+                    }
+                    else if( mmx - mmn == mn )
+                    {
+                        int symph1 = 0;
+                        for( int x = 0 ; x < i ; x++ )
+                            for( int y = 0 ; y < i ; y++ )
+                                symph1 += mas[ ma[x] ][ ma[y] ];
+                        for( int x = i ; x < i + j ; x++ )
+                            for( int y = i ; y < i + j ; y++ )
+                                symph1 += mas[ ma[x] ][ ma[y] ];
+                        for( int x = i + j ; x < 7 ; x++ )
+                            for( int y = i + j ; y < 7 ; y++ )
+                                symph1 += mas[ ma[x] ][ ma[y] ];
+                        symph = max( symph, symph1 );
+                    }
+
+                }
+                while( next_permutation( ma, ma + 7 ) );
+            }
+    cout << mn << " " << symph << endl;
     return 0;
 }

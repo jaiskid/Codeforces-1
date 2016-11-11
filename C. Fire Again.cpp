@@ -93,51 +93,48 @@ int dky8[]= {2,2,-2,-2,1,-1,1,-1};
 int tc=1;
 const double eps=1e-9;
 const double pi=acos(-1.0);
-const long long int mx=1e5;
+const long long int mx=2000;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+int n,m;
+int level[mx+5][mx+5];
+bool visited[mx+5][mx+5];
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int i,k,x,y,nx,ny;
+    queue<pii>q;
+    pii top;
+    read;
+    write;
+
+    cin>>n>>m>>k;
+    for(i=0; i<k; i++)
     {
-        for(i=0; i<n; i++)
-        {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
-        }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
-        {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
-        }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
-        pr1(ans);
+        cin>>x>>y;
+        q.push(pii(x,y));
+        visited[x][y]=true;
+        level[x][y]=0;
     }
+    while(!q.empty())
+    {
+        top=q.front();
+        q.pop();
+        x=top.first;
+        y=top.second;
+        for(i=0;i<4;i++)
+        {
+            nx=x+dx4[i];
+            ny=y+dy4[i];
+            if(nx>=1 && ny>=1 && nx<=n && ny<=m && !visited[nx][ny])
+            {
+                visited[nx][ny]=true;
+                level[nx][ny]=level[x][y]+1;
+                q.push(pii(nx,ny));
+            }
+        }
+    }
+    pr2(x,y);
     return 0;
 }

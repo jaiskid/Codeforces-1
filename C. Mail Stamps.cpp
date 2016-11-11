@@ -97,47 +97,51 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+vi adjacent[mx+5];
+bool visited[mx+5];
+int cnt[mx+5];
+map<int,int>mp,mmp;
+
+void dfs(int node)
+{
+    int i,a;
+    printf("%d ",mmp[node]);
+    visited[node]=true;
+    for(i=0; i<adjacent[node].size(); i++)
+    {
+        a=adjacent[node][i];
+        if(!visited[a]) dfs(a);
+    }
+    return;
+}
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int i,n,a,b,ass;
+    cin>>n;
+    ass=0;
+    for(i=1; i<=n; i++)
     {
-        for(i=0; i<n; i++)
-        {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
-        }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
-        {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
-        }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
-        pr1(ans);
+        iin(a);
+        iin(b);
+        if(!mp[a]) mp[a]=++ass,mmp[ass]=a;
+        if(!mp[b]) mp[b]=++ass,mmp[ass]=b;
+        a=mp[a];
+        b=mp[b];
+        adjacent[a].pb(b);
+        adjacent[b].pb(a);
+        cnt[a]++;
+        cnt[b]++;
     }
+    for(i=1; i<=n+1; i++)
+    {
+        if(cnt[i]==1)
+        {
+            a=i;
+            break;
+        }
+    }
+    dfs(a);
+    nl;
     return 0;
 }

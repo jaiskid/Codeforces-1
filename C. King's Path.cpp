@@ -62,7 +62,7 @@ LL MOD_EXPO(LL b, LL p, LL m)
 LL POWER(LL N, LL K)
 {
     LL i,ans=1;
-    for(i=1; i<=K; i++) ans*=N;
+    for(i=1;i<=K;i++) ans*=N;
     return ans;
 }
 int SET(int N, int pos)
@@ -97,47 +97,58 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+map<int,map<int,bool> >mp;
+map<int,map<int,bool> >vis;
+map<int,map<int,int> >level;
+int xx0,yy0,xx1,yy1;
+
+int BFS(void)
+{
+    queue<pii>q;
+    int nx,ny,i,x,y;
+    pii top;
+    if(mp[xx0][yy0])
+    {
+        q.push(pii(xx0,yy0));
+        vis[xx0][yy0]=true;
+        level[xx0][yy0]=0;
+    }
+    while(!q.empty())
+    {
+        top=q.front();
+        q.pop();
+        x=top.first;
+        y=top.second;
+        for(i=0;i<8;i++)
+        {
+            nx=x+dx8[i];
+            ny=y+dy8[i];
+            if(mp[nx][ny] && !vis[nx][ny])
+            {
+                vis[nx][ny]=true;
+                level[nx][ny]=level[x][y]+1;
+                q.push(pii(nx,ny));
+            }
+            if(vis[xx1][yy1]) return level[xx1][yy1];
+        }
+    }
+    return -1;
+}
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int i,r,a,b,j,n;
+    cin>>xx0>>yy0>>xx1>>yy1>>n;
+    for(i=0;i<n;i++)
     {
-        for(i=0; i<n; i++)
+        iin(r);
+        iin(a);
+        iin(b);
+        for(j=a;j<=b;j++)
         {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
+            mp[r][j]=true;
         }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
-        {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
-        }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
-        pr1(ans);
     }
+    pr1(BFS());
     return 0;
 }

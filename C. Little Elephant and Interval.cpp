@@ -97,46 +97,64 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+LL val[20+5];
+string strl,strr;
+
+void gen(void)
+{
+    LL i;
+    val[0]=0;
+    for(i=1; i<=18; i++)
+    {
+        val[i]=POWER(10,i-2);
+    }
+    return;
+}
+
+LL calc(string str, LL n)
+{
+    char dig1,dig2;
+    LL i,ans,k;
+
+    n=str.size();
+    dig1=str[0];
+    dig2=str[n-1];
+
+    ans=0;
+    for(i=1; i<n; i++) ans+=9ll*val[i];
+
+    k=(dig1-'0')-1;
+    k=max(k,0ll);
+    ans+=val[n]*k;
+
+    k=0;
+    for(i=1; i<n-1; i++)
+    {
+        k=k*10+(str[i]-'0');
+    }
+
+    ans+=k;
+
+    if(dig2>=dig1 && dig1>'0') ans++;
+
+
+    return ans;
+}
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    LL i,ans,l,r;
+    gen();
+    while(cin>>l>>r)
     {
-        for(i=0; i<n; i++)
-        {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
-        }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
-        {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
-        }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
+        stringstream str1,str2;
+        l--;
+        str1<<l;
+        str2<<r;
+        str1>>strl;
+        str2>>strr;
+        ans=0;
+        ans=calc(strr,strr.size())-calc(strl,strl.size());
         pr1(ans);
     }
     return 0;

@@ -97,47 +97,93 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+string gen_rhyme(string str, int k)
+{
+    int i,cnt;
+    string rhyme;
+
+    i=str.size()-1;
+    cnt=0;
+    while(i>=0)
+    {
+        if(str[i]=='a' || str[i]=='e' || str[i]=='i' || str[i]=='o' || str[i]=='u') cnt++;
+        if(cnt==k) break;
+        i--;
+    }
+    rhyme="";
+    while(cnt==k && i<str.size()) rhyme+=str[i++];
+
+    if(rhyme=="") rhyme="invalid";
+    return rhyme;
+}
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    string str,rhyme;
+    int i,n,k,cnt,j;
+    bool flag;
+    fast;
+    while(cin>>n>>k)
     {
+        map<string,int>poem;
+        map<string,int>::iterator it;
+        flag=true;
         for(i=0; i<n; i++)
         {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
+            map<string,int>quatrine;
+            vi idx;
+            cnt=0;
+            for(j=0;j<4;j++)
+            {
+                cin>>str;
+                rhyme=gen_rhyme(str,k);
+                if(rhyme=="invalid") flag=false;
+                if(quatrine[rhyme]==0) quatrine[rhyme]=++cnt;
+                idx.pb(quatrine[rhyme]);
+            }
+            if(cnt<=2 && flag)
+            {
+                rhyme="";
+                for(j=0;j<4;j++)
+                {
+                    if(idx[j]==1) rhyme+="a";
+                    if(idx[j]==2) rhyme+="b";
+                }
+                if(rhyme!="aaaa" && rhyme!="aabb" && rhyme!="abab" && rhyme!="abba")
+                {
+                    rhyme="invalid";
+                    flag=false;
+                }
+            }
+            else
+            {
+                flag=false;
+                rhyme="invalid";
+            }
+            poem[rhyme]++;
         }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
+        if(flag)
         {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
+            if(poem.size()==1)
+            {
+                it=poem.begin();
+                rhyme=it->fs;
+            }
+            else if(poem.size()==2)
+            {
+                it=poem.begin();
+                str=it->fs;
+                it++;
+                rhyme=it->fs;
+                if(str!="aaaa") flag=false;
+            }
+            else
+            {
+                flag=false;
+            }
         }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
-        pr1(ans);
+        if(!flag) rhyme="NO";
+        pr1(rhyme);
     }
     return 0;
 }

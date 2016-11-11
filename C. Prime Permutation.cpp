@@ -93,51 +93,84 @@ int dky8[]= {2,2,-2,-2,1,-1,1,-1};
 int tc=1;
 const double eps=1e-9;
 const double pi=acos(-1.0);
-const long long int mx=1e5;
+const long long int mx=1e3;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+char str[mx+5];
+bool x[mx+5];
+bool dsu[mx+5];
+
+void sieve(void)
+{
+    int i,j,s;
+    x[0]=x[1]=true;
+    for(i=4; i<=mx; i+=2) x[i]=true;
+    s=sqrt(mx);
+    for(i=3; i<=s; i+=2)
+    {
+        if(!x[i])
+        {
+            for(j=i+i; j<=mx; j+=i) x[j]=true;
+        }
+    }
+    return;
+}
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int n,i,k;
+    bool flag;
+    char ch;
+    sieve();
+    while(scanf("%s",str+1)!=EOF)
     {
-        for(i=0; i<n; i++)
+        map<char,int>mp;
+        set<int>s;
+        setzero(dsu);
+
+        n=strlen(str+1);
+        for(i=1; i<=n; i++) mp[str[i]]++;
+        for(i=1; i<=n; i++)
         {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
+            k=1;
+            while(!x[i] && i<=n/2 && i*k<=n)
+            {
+                dsu[i*k]=true;
+                s.insert(i*k);
+                k++;
+            }
         }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
+        flag=false;
+        for(i=0; i<26; i++)
         {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
+            if(mp[i+'a']>=s.size())
+            {
+                ch='a'+i;
+                flag=true;
+                break;
+            }
         }
-        if(left__.size()<=1 && right__.size())
+        for(i=1; i<=n; i++)
         {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
+            if(dsu[i])
+            {
+                str[i]=ch;
+                mp[ch]--;
+            }
         }
-        if(right__.size()<=1 && left__.size())
+        ch='a';
+        for(i=1; i<=n; i++)
         {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
+            if(!dsu[i])
+            {
+                while(!mp[ch]) ch++;
+                str[i]=ch;
+                mp[ch]--;
+            }
         }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
-        pr1(ans);
+        if(flag) printf("YES\n%s\n",str+1);
+        else printf("NO\n");
     }
     return 0;
 }

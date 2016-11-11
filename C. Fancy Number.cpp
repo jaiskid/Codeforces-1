@@ -97,47 +97,81 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
-
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int i,j,n,k,idx,cnt,ans,maxi,need,a,b;
+    string str,lexi_min,anss;
+    while(cin>>n>>k)
     {
+        cin>>str;
+        map<int,int>mp;
+        maxi=0;
         for(i=0; i<n; i++)
         {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
+            mp[str[i]-'0']++;
+            maxi=max(maxi,mp[str[i]-'0']);
         }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
+        if(maxi>=k)
         {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
+            pr1(0);
+            pr1(str);
+            continue;
         }
-        if(left__.size()<=1 && right__.size())
+        ans=INT_MAX;
+        idx=-1;
+        for(i=0; i<10; i++)
         {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
+            need=k-mp[i];
+            cnt=0;
+            lexi_min=str;
+            for(j=1; j<=9 && need>0; j++)
+            {
+                a=i-j;
+                b=i+j;
+                if(b>=0 && b<=9)
+                {
+                    for(idx=0; idx<n && need>0; idx++)
+                    {
+                        if(lexi_min[idx]-'0'==b)
+                        {
+                            lexi_min[idx]=i+'0';
+                            need--;
+                            cnt+=j;
+                        }
+                    }
+                }
+                if(a>=0 && a<=9)
+                {
+                    for(idx=n-1; idx>=0 && need>0; idx--)
+                    {
+                        if(lexi_min[idx]-'0'==a)
+                        {
+                            lexi_min[idx]=i+'0';
+                            need--;
+                            cnt+=j;
+                        }
+                    }
+                }
+            }
+            if(cnt<ans || ans==INT_MAX)
+            {
+                ans=cnt;
+                anss=lexi_min;
+            }
+            else if(cnt==ans && lexi_min<anss)
+            {
+                anss=lexi_min;
+            }
         }
-        if(right__.size()<=1 && left__.size())
+        need=k-mp[idx];
+        for(j=1; j<=9 && need; j++)
         {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
+            a=idx-j;
+            b=idx+j;
+
         }
         pr1(ans);
+        pr1(anss);
     }
     return 0;
 }

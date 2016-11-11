@@ -93,51 +93,104 @@ int dky8[]= {2,2,-2,-2,1,-1,1,-1};
 int tc=1;
 const double eps=1e-9;
 const double pi=acos(-1.0);
-const long long int mx=1e5;
+const long long int mx=1e3;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+string str[mx+5];
+int visited[mx+5][mx+5];
+int dp[mx+5][mx+5];
+int n,m;
+bool cycle;
+
+char next_char(char ch)
+{
+    if(ch=='D') return 'I';
+    if(ch=='I') return 'M';
+    if(ch=='M') return 'A';
+    if(ch=='A') return 'D';
+    return '#';
+}
+
+void dfs(int x, int y)
+{
+    int i,nx,ny,cnt;
+
+    if(visited[x][y]==1) cycle=true;
+    if(cycle) return;
+
+    visited[x][y]=1;
+
+    for(i=0; i<4; i++)
+    {
+        nx=x+dx4[i];
+        ny=y+dy4[i];
+        if(nx>=0 && ny>=0 && nx<n && ny<m && str[nx][ny]==next_char(str[x][y]) && visited[nx][ny]<2)
+        {
+            dfs(nx,ny);
+        }
+    }
+    visited[x][y]=2;
+    return;
+}
+
+int calc(int x, int y)
+{
+    int i,nx,ny;
+
+    int &ret=dp[x][y];
+    if(ret!=-1) return ret;
+
+    ret=0;
+
+    for(i=0; i<4; i++)
+    {
+        nx=x+dx4[i];
+        ny=y+dy4[i];
+        if(nx>=0 && ny>=0 && nx<n && ny<m && str[nx][ny]==next_char(str[x][y]))
+        {
+            ret=max(ret,calc(nx,ny));
+        }
+    }
+    ret+=(str[x][y]=='A');
+    return ret;
+}
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int i,j,ans,k;
+    fast;
+    while(cin>>n>>m)
     {
+        setzero(visited);
+        setneg(dp);
+        for(i=0; i<n; i++) cin>>str[i];
+        cycle=false;
+        ans=0;
         for(i=0; i<n; i++)
         {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
+            for(j=0; j<m; j++)
+            {
+                if(!visited[i][j] && str[i][j]=='D')
+                {
+                    dfs(i,j);
+                }
+            }
         }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
+        ans=0;
+        for(i=0; i<n && !cycle; i++)
         {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
+            for(j=0; j<m && !cycle; j++)
+            {
+                if(str[i][j]=='D')
+                {
+                    ans=max(ans,calc(i,j));
+                }
+            }
         }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
-        pr1(ans);
+        if(cycle) pr1("Poor Inna!");
+        else if(!ans) pr1("Poor Dima!");
+        else pr1(ans);
     }
     return 0;
 }

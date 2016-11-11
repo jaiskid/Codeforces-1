@@ -97,47 +97,60 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+vector<long long>vec[1000009],vecc[1000009];
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    long long a,s,d,f,g,h,j,k,l,sq_x_1,sq_x_2,sq_y_1,sq_y_2;
+    for(a=1; a<=1000; a++)
     {
-        for(i=0; i<n; i++)
+        for(s=1; s*s<=a*a; s++)
         {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
+            f=a*a-s*s;
+            d=sqrt(f);
+            if(s*s+d*d==a*a)
+            {
+                vec[a*a].push_back(s);
+                vecc[a*a].push_back(d);
+                vec[a*a].push_back(-s);
+                vecc[a*a].push_back(d);
+                vec[a*a].push_back(s);
+                vecc[a*a].push_back(-d);
+                vec[a*a].push_back(-s);
+                vecc[a*a].push_back(-d);
+            }
         }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
-        {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
-        }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
-        pr1(ans);
     }
+    cin>>a>>s;
+    a=a*a;
+    s=s*s;
+    if(vec[a].size()==0 || vec[s].size()==0)
+    {
+        cout<<"NO\n";
+        return 0;
+    }
+    else
+    {
+        for(d=0; d<vec[a].size(); d++)
+        {
+            for(f=0; f<vec[s].size(); f++)
+            {
+                g=vec[a][d];
+                h=vecc[a][d];
+                j=vec[s][f];
+                k=vecc[s][f];
+                if(g==j || h==k) continue;
+                if(g*k==h*j) continue;
+                l=(g-j)*(g-j)+(h-k)*(h-k);
+                if(l!=a+s && a!=s+l && s!=a+l) continue;
+                cout<<"YES\n";
+                cout<<"0 0\n";
+                cout<<g<<" "<<h<<endl;
+                cout<<j<<" "<<k<<endl;
+                return 0;
+            }
+        }
+    }
+    cout<<"NO\n";
     return 0;
 }

@@ -97,47 +97,121 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
-
+char matrix[53][53];
+bool visited[53][53];
+bool dip[53][53];
+int n, m, k;
+void makeland(int i, int j)
+{
+    if(i < 0 || i >= n || j < 0 || j >= m)
+        return;
+    if(visited[i][j] || matrix[i][j] == '*')
+        return;
+    visited[i][j] = true;
+    dip[i][j] = true;
+    makeland(i + 1, j);
+    makeland(i - 1, j);
+    makeland(i, j + 1);
+    makeland(i, j - 1);
+}
+void makelandnow(int i, int j)
+{
+    if(i < 0 || i >= n || j < 0 || j >= m)
+        return;
+    if(visited[i][j] || matrix[i][j] == '*')
+        return;
+    visited[i][j] = true;
+    matrix[i][j] = '*';
+    makelandnow(i + 1, j);
+    makelandnow(i - 1, j);
+    makelandnow(i, j + 1);
+    makelandnow(i, j - 1);
+}
+struct lakeinfo
+{
+    int i, j, cnt;
+    lakeinfo()
+    {
+        i = -1, j = -1, cnt = 0;
+    }
+    lakeinfo(int ii, int jj, int cc)
+    {
+        i = ii;
+        j = jj;
+        cnt = cc;
+    }
+    bool operator < (const lakeinfo& L) const
+    {
+        return cnt < L.cnt;
+    }
+};
+vector < lakeinfo > lakes;
+int calc(int i, int j)
+{
+    if(i < 0 || i >= n || j < 0 || j >= m)
+        return 0;
+    if(visited[i][j] || matrix[i][j] == '*')
+        return 0;
+    visited[i][j] = true;
+    int ret = 1;
+    ret += calc(i + 1, j);
+    ret += calc(i - 1, j);
+    ret += calc(i, j + 1);
+    ret += calc(i, j - 1);
+    return ret;
+}
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int i,j;
+    cin >> n >> m >> k;
+    setzero(dip);
+    for(i=0; i<n; i++)
     {
-        for(i=0; i<n; i++)
-        {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
-        }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
-        {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
-        }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
-        pr1(ans);
+        scanf("%s", matrix[i]);
     }
+    for(i=0; i<n; i++)
+    {
+        setzero(visited);
+        makeland(i, 0);
+        setzero(visited);
+        makeland(i, m - 1);
+    }
+    for(j=0; j<m; j++)
+    {
+        setzero(visited);
+        makeland(0, j);
+        setzero(visited);
+        makeland(n - 1, j);
+    }
+    setzero(visited);
+    for(int i = 1; i < n - 1; ++i)
+    {
+        for(int j = 1; j < m - 1; ++j)
+        {
+            if(dip[i][j])
+                continue;
+            int w = calc(i, j);
+            if(w > 0)
+            {
+                lakes.pb(lakeinfo(i, j, w));
+            }
+        }
+    }
+    sort(lakes.begin(),lakes.end());
+    int len = lakes.size();
+    int ans = 0;
+    int still = len - k;
+    setzero(visited);
+    for(int i = 0; i < len && still > 0; ++i, still--)
+    {
+        ans += lakes[i].cnt;
+        makelandnow(lakes[i].i, lakes[i].j);
+    }
+    cout << ans << '\n';
+    for(i=0; i<n; i++)
+    {
+        puts(matrix[i]);
+    }
+    puts("");
     return 0;
 }

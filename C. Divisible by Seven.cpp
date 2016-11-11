@@ -97,47 +97,54 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
-
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int i,cnt,tmp;
+    string str;
+    while(cin>>str)
     {
-        for(i=0; i<n; i++)
+        map<int,int>mp;
+        vi perm;
+        for(i=0; i<str.size(); i++) mp[str[i]-'0']++;
+        cnt=0;
+        for(i=1; i<=9; i++)
         {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
+            if(i==1 || i==6 || i==8 || i==9)
+            {
+                while(mp[i]>1)
+                {
+                    printf("%d",i);
+                    mp[i]--;
+                    cnt=(cnt*10+i)%7;
+                }
+            }
+            else
+            {
+                while(mp[i]>0)
+                {
+                    printf("%d",i);
+                    mp[i]--;
+                    cnt=(cnt*10+i)%7;
+                }
+            }
         }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
+        perm.pb(1);
+        perm.pb(6);
+        perm.pb(8);
+        perm.pb(9);
+        do
         {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
+            tmp=cnt;
+            for(i=0; i<4; i++) tmp=(tmp*10+perm[i])%7;
+            if(!tmp)
+            {
+                for(i=0; i<4; i++) printf("%d",perm[i]);
+                break;
+            }
         }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
-        pr1(ans);
+        while(next_permutation(perm.begin(),perm.end()));
+        while(mp[0]>0) printf("0"),mp[0]--;
+        nl;
     }
     return 0;
 }

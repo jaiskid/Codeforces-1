@@ -62,7 +62,7 @@ LL MOD_EXPO(LL b, LL p, LL m)
 LL POWER(LL N, LL K)
 {
     LL i,ans=1;
-    for(i=1; i<=K; i++) ans*=N;
+    for(i=1;i<=K;i++) ans*=N;
     return ans;
 }
 int SET(int N, int pos)
@@ -93,50 +93,57 @@ int dky8[]= {2,2,-2,-2,1,-1,1,-1};
 int tc=1;
 const double eps=1e-9;
 const double pi=acos(-1.0);
-const long long int mx=1e5;
+const long long int mx=1e3;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+LL dp[mx+5][mx+5];
+LL a[mx+5];
+LL power[mx+5];
+
+void gen(void)
+{
+    LL i,j;
+    for(i=0;i<=mx;i++)
+    {
+        for(j=0;j<=i;j++)
+        {
+            if(j==0 || j==i) dp[i][j]=1;
+            else dp[i][j]=(dp[i-1][j-1]+dp[i-1][j])%mod;
+        }
+        if(i<=1) power[i]=1;
+        else power[i]=(power[i-1]*2ll)%mod;
+    }
+    return;
+}
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    LL i,j,n,m,ans,cnt,tmp;
+    gen();
+    while(cin>>n>>m)
     {
-        for(i=0; i<n; i++)
+        for(i=0;i<m;i++) iin(a[i]);
+        sort(a,a+m);
+        ans=1;
+        cnt=tmp=0;
+        for(i=0;i<m;i++)
         {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
+            if(i==0)
+            {
+                tmp=a[i]-1;
+            }
+            else
+            {
+                tmp=a[i]-a[i-1]-1;
+                ans=(ans*power[tmp])%mod;
+            }
+            cnt+=tmp;
+            ans=(ans*dp[cnt][tmp])%mod;
         }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
-        {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
-        }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
+        tmp=n-a[m-1];
+        cnt+=tmp;
+        ans=(ans*dp[cnt][tmp])%mod;
         pr1(ans);
     }
     return 0;

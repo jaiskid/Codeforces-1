@@ -93,51 +93,87 @@ int dky8[]= {2,2,-2,-2,1,-1,1,-1};
 int tc=1;
 const double eps=1e-9;
 const double pi=acos(-1.0);
-const long long int mx=1e5;
+const long long int mx=5e4;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+LL val[mx+5];
+LL a,b,c,d;
+
+void calc(void)
+{
+    LL i;
+    for(i=0; i<=mx; i++)
+    {
+        val[i]=i*(i-1)/2;
+    }
+    return;
+}
+
+LL check(LL x)
+{
+    LL i;
+    for(i=0; i<=mx; i++)
+    {
+        if(val[i]==x) return i;
+    }
+    return -1;
+}
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    LL i,j,have,zeroes,ones;
+    string str;
+    bool flag;
+    calc();
+    while(cin>>a>>b>>c>>d)
     {
-        for(i=0; i<n; i++)
+        zeroes=check(a);
+        ones=check(d);
+        flag=true;
+        flag&=(zeroes>=0 && ones>=0);
+        flag&=((zeroes*ones==b+c) || (zeroes==b+c && !ones) || (ones==b+c && !zeroes));
+        if(!zeroes && !ones && b==1 && c==0)
         {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
+            pr1("01");
+            continue;
         }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
+        if(!zeroes && !ones && b==0 && c==1)
         {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
+            pr1("10");
+            continue;
         }
-        if(left__.size()<=1 && right__.size())
+        if(zeroes*ones==b+c)
         {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
+            str="";
+            for(i=0; i<zeroes; i++) str+="0";
+            for(i=0; i<ones; i++) str+="1";
+            have=0;
+            i=zeroes-1;
+            while(have<c && flag)
+            {
+                j=i+ones;
+                if(c-have<ones) j=i+(c-have);
+                swap(str[i],str[j]);
+                have+=ones;
+                i--;
+            }
         }
-        if(right__.size()<=1 && left__.size())
+        else if(zeroes==b+c)
         {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
+            str="1";
+            for(i=0; i<zeroes; i++) str+="0";
+            swap(str[0],str[b]);
         }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
+        else if(ones==b+c)
         {
-            ans=0;
+            str="0";
+            for(i=0; i<ones; i++) str+="1";
+            swap(str[0],str[c]);
         }
-        pr1(ans);
+        if(!flag) str="Impossible";
+        if(a+b+c+d==0) str="0";
+        pr1(str);
     }
     return 0;
 }

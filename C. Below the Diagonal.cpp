@@ -97,47 +97,88 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+vector<int>vc[1001];
+vector<pair<int,pair<int,int> > >vv;
+int on[1001];
+int col[1001];
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int a,b,c,d,e,f,g,h,x,y,z;
+    cin>>a;
+    for(x=2; x<=a; x++)
     {
-        for(i=0; i<n; i++)
-        {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
-        }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
-        {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
-        }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
-        pr1(ans);
+        cin>>b>>c;
+        vc[b].push_back(c);
+        col[c]++;
     }
+    memset(on,0,sizeof on);
+    for(x=a; x>=1; x--)
+    {
+        d=0;
+        e=0;
+        for(y=1; y<=x; y++)
+        {
+            if(vc[y].size()>d)
+            {
+                d=vc[y].size();
+                e=y;
+            }
+        }
+        swap(vc[e],vc[x]);
+        if(vc[x].size()!=0 && x!=e)vv.push_back(make_pair(1,make_pair(x,e)));
+    }
+    b=0;
+    for(x=2; x<=a; x++)
+    {
+        if(vc[x].size()==0) continue;
+        for(y=0; y<vc[x].size(); y++)
+        {
+            d=0;
+            e=-1;
+            for(z=y; z<vc[x].size(); z++)
+            {
+                if(on[vc[x][y]]==0 && col[vc[x][z]]>d)
+                {
+                    d=col[vc[x][z]];
+                    e=z;
+                }
+            }
+            if(e==-1) continue;
+            swap(vc[x][y],vc[x][e]);
+            if(b+1!=vc[x][y] && on[vc[x][y]]==0)
+            {
+                vv.push_back(make_pair(2,make_pair(b+1,vc[x][y])));
+                on[b+1]=1;
+                f=vc[x][y];
+                for(z=x; z<=a; z++)
+                {
+                    for(h=0; h<vc[z].size(); h++)
+                    {
+                        if(vc[z][h]==f)
+                        {
+                            vc[z][h]=b+1;
+                            col[b+1]++;
+                            col[f]--;
+                        }
+                        else if(vc[z][h]==b+1)
+                        {
+                            vc[z][h]=f;
+                            col[f]++;
+                            col[b+1]--;
+                        }
+                    }
+                }
+                b++;
+            }
+            else if(b+1==vc[x][y])
+            {
+                on[b+1]=1;
+                b++;
+            }
+        }
+    }
+    cout<<vv.size()<<endl;
+    for(x=0; x<vv.size(); x++) cout<<vv[x].fs<<" "<<vv[x].sc.fs<<" "<<vv[x].sc.sc<<endl;
     return 0;
 }

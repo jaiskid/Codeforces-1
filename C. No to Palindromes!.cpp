@@ -93,51 +93,52 @@ int dky8[]= {2,2,-2,-2,1,-1,1,-1};
 int tc=1;
 const double eps=1e-9;
 const double pi=acos(-1.0);
-const long long int mx=1e5;
+const long long int mx=1e3;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+char str[mx+5];
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int n, p, i, j;
+    char ch;
+    scanf("%d %d", &n, &p);
+    scanf("%s", str);
+    for (i = n - 1; i >= 0; i--)
     {
-        for(i=0; i<n; i++)
+        for (ch = str[i] + 1; ch < 'a' + p; ch++)
         {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
+            if (i - 1 >= 0 && str[i - 1] == ch) continue;
+            if (i - 2 >= 0 && str[i - 2] == ch) continue;
+            if (p == 2 && n > 2) continue;
+            if (p == 1 && n > 1) continue;
+            for (j = 0; j < n; j++)
+            {
+                if (j < i)
+                {
+                    putchar(str[j]);
+                    continue;
+                }
+                if (j == i)
+                {
+                    str[i] = ch;
+                    putchar(str[i]);
+                    continue;
+                }
+                for (ch = 'a'; ch < 'a' + p; ch++)
+                {
+                    if (j - 1 >= 0 && str[j - 1] == ch) continue;
+                    if (j - 2 >= 0 && str[j - 2] == ch) continue;
+                    str[j] = ch;
+                    break;
+                }
+                putchar(str[j]);
+            }
+            printf("\n");
+            return 0;
         }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
-        {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
-        }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
-        pr1(ans);
     }
+    puts("NO");
     return 0;
 }

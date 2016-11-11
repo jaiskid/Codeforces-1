@@ -97,47 +97,66 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
-
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    string str,out;
+    int i,k,n,t;
+    bool point,change,check;
+    while(cin>>n>>t>>str)
     {
+        point=false;
+        change=false;
+        check=false;
+        k=-1;
         for(i=0; i<n; i++)
         {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
+            if(str[i]=='.') point=true;
+            if(point && str[i]>='5')
+            {
+                k=i;
+                break;
+            }
         }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
+        if(k==-1)
         {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
+            pr1(str);
+            continue;
         }
-        if(left__.size()<=1 && right__.size())
+        for(i=k; i>=0 && point; i--)
         {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
+            if(point && !check && str[i]=='.') break;
+            if(((str[i]>='5' && str[i]<='9') || str[i]=='A') && t && point)
+            {
+                if(i>0 && str[i-1]>='0' && str[i-1]<'9') str[i-1]=str[i-1]+1,k=i-1;
+                else if(i>0 && str[i-1]=='9') str[i-1]='A',k=i-1;
+                else if(i>1 && str[i-1]=='.' && str[i-2]>='0' && str[i-2]<'9') str[i-2]=str[i-2]+1,k=i-2,point=false;
+                else if(i>1 && str[i-1]=='.' && str[i-2]=='9') str[i-2]='A',k=i-2,point=false,check=true;
+                str[i]='0';
+                t--;
+            }
         }
-        if(right__.size()<=1 && left__.size())
+        i=k;
+        while(check && i>0 && str[i]=='A')
         {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
+            if(str[i-1]>='0' && str[i-1]<'9') str[i-1]=str[i-1]+1;
+            else if(str[i-1]=='9') str[i-1]='A';
+            i--;
         }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
+        for(i=k; i>0; i--)
         {
-            ans=0;
+            if(str[i]=='A') str[i]='0';
         }
-        pr1(ans);
+        if(str[0]=='A')
+        {
+            str[0]='0';
+            str="1"+str;
+            k++;
+        }
+        while(str[k]=='0' && point) k--;
+        if(str[k]=='.') k--;
+        out="";
+        for(i=0; i<=k; i++) out+=str[i];
+        pr1(out);
     }
     return 0;
 }

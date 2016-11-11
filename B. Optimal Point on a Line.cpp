@@ -102,12 +102,12 @@ LL n;
 
 int main()
 {
-    LL i,ans,high,mid,low,sum,cnt;
+    LL i;
     while(cin>>n)
     {
-        sum=0;
-        for(i=0;i<n;i++) clin(a[i]),sum+=a[i];
-        pr1(sum/n);
+        for(i=0;i<n;i++) clin(a[i]);
+        sort(a,a+n);
+        pr1(a[(n-1)/2]);
     }
     return 0;
 }

@@ -97,47 +97,68 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+char str[mx+5];
+int arr[mx+5];
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int i,n,j,cnt,ans,l,r,idx1,idx2;
+    bool flag;
+    while(scanf("%s",str+1)!=EOF)
     {
-        for(i=0; i<n; i++)
+        stack<char>st;
+        stack<int>idx;
+        n=strlen(str+1);
+        for(i=0; i<=n+1; i++) arr[i]=i;
+        for(i=1; i<=n+1; i++)
         {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
+            if(str[i]=='(' || str[i]=='[')
+            {
+                st.push(str[i]);
+                idx.push(i);
+            }
+            else
+            {
+                if(!st.empty() && ((str[i]==']' && st.top()=='[') || (str[i]==')' && st.top()=='(')))
+                {
+                    st.pop();
+                    arr[idx.top()]=i;
+                    idx.pop();
+                }
+                else
+                {
+                    while(!st.empty()) st.pop();
+                }
+            }
         }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
+        idx1=1;
+        idx2=0;
+        l=r=0;
+        cnt=0;
+        ans=0;
+        for(i=1; i<=n; i++)
         {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
-        }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
+            if(arr[i]==i)
+            {
+                cnt=0;
+                idx1=i+1;
+            }
+            else
+            {
+                for(j=i; j<=arr[i]; j++) cnt+=(str[j]=='[');
+                idx2=arr[i];
+            }
+            if(cnt>ans)
+            {
+                ans=cnt;
+                l=idx1;
+                r=idx2;
+            }
+            i=arr[i];
         }
         pr1(ans);
+        for(i=l; i<=r && l<r; i++) printf("%c",str[i]);
+        nl;
     }
     return 0;
 }

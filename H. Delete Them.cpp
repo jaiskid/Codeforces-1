@@ -93,51 +93,66 @@ int dky8[]= {2,2,-2,-2,1,-1,1,-1};
 int tc=1;
 const double eps=1e-9;
 const double pi=acos(-1.0);
-const long long int mx=1e5;
+const long long int mx=100;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+string str[mx+5],pattern;
+int arr[mx+5];
+bool check[mx+5];
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int i,n,m,j,k,idx,sz;
+    bool flag;
+    char ch;
+    while(cin>>n>>m)
     {
-        for(i=0; i<n; i++)
+        for(i=0; i<n; i++) cin>>str[i];
+        for(i=0; i<m; i++) iin(arr[i]),arr[i]--;
+        flag=true;
+        setzero(check);
+        sz=str[arr[0]].size();
+        for(i=0; i<m; i++)
         {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
+            check[arr[i]]=true;
+            if(str[arr[i]].size()!=sz)
+            {
+                flag=false;
+                break;
+            }
         }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
+        pattern="";
+        for(i=0;i<sz && flag;i++)
         {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
+            ch=str[arr[0]][i];
+            for(j=0;j<m;j++)
+            {
+                if(str[arr[j]][i]!=ch) break;
+            }
+            if(j==m) pattern+=ch;
+            else pattern+="?";
         }
-        if(left__.size()<=1 && right__.size())
+        for(i=0;i<n && flag;i++)
         {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
+            if(!check[i] && str[i].size()==sz)
+            {
+                for(j=0;j<sz;j++)
+                {
+                    if(pattern[j]!=str[i][j] && pattern[j]!='?') break;
+                }
+                if(j==sz) flag=false;
+            }
         }
-        if(right__.size()<=1 && left__.size())
+        if(flag)
         {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
+            pr1("Yes");
+            pr1(pattern);
         }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
+        else
         {
-            ans=0;
+            pr1("No");
         }
-        pr1(ans);
     }
     return 0;
 }

@@ -97,47 +97,49 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
-
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int i,n,cnt1,cnt2,j,k;
+    string str;
+    char ch;
+    bool flag;
+    while(cin>>str)
     {
-        for(i=0; i<n; i++)
+        if(str.size()<26)
         {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
+            pr1(-1);
+            continue;
         }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
+        flag=false;
+        for(i=0; i<str.size()-25 && !flag; i++)
         {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
+            map<char,int>mp;
+            vector<char>vc;
+            cnt1=cnt2=0;
+            for(j=i; j<i+26; j++)
+            {
+                mp[str[j]]++;
+            }
+            for(ch='A'; ch<='Z'; ch++)
+            {
+                if(mp[ch]==0) cnt1++,vc.pb(ch);
+            }
+            cnt2=mp['?'];
+            if(cnt1==cnt2)
+            {
+                for(j=i,k=0; j<i+26; j++)
+                {
+                    if(str[j]=='?') str[j]=vc[k++];
+                }
+                flag=true;
+            }
         }
-        if(left__.size()<=1 && right__.size())
+        for(i=0;i<str.size() && flag;i++)
         {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
+            if(str[i]=='?') str[i]='A';
         }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
-        pr1(ans);
+        if(flag) pr1(str);
+        else pr1(-1);
     }
     return 0;
 }

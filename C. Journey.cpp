@@ -93,51 +93,106 @@ int dky8[]= {2,2,-2,-2,1,-1,1,-1};
 int tc=1;
 const double eps=1e-9;
 const double pi=acos(-1.0);
-const long long int mx=1e5;
+const long long int mx=5000;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+vi edges[mx+5],cost[mx+5];
+int n,m,t,a;
+vi out;
+int dist[mx+5][mx+5],par[mx+5][mx+5];
+
+class node
+{
+public:
+    int u,v,w;
+    node(LL a, LL b, LL c)
+    {
+        u=a;
+        v=b;
+        w=c;
+    }
+    node()
+    {
+
+    }
+};
+
+bool operator<(node A, node B)
+{
+    return B.w<A.w;
+}
+
+void Dijkstra(void)
+{
+    node top;
+    int x,i,a,k,b,j;
+    for(i=0; i<=mx; i++)
+    {
+        for(j=0; j<=mx; j++) dist[i][j]=2e9;
+    }
+
+    priority_queue<node>Q;
+    Q.push(node(1,1,0));
+    par[1][1]=0;
+    dist[1][1]=0;
+
+    while(!Q.empty())
+    {
+        top=Q.top();
+        Q.pop();
+
+        x=top.u;
+        b=top.v;
+        k=top.w;
+        if(k>=t) continue;
+
+        for(i=0; i<edges[x].size(); i++)
+        {
+            a=edges[x][i];
+            if(dist[x][b]+cost[x][i]<dist[a][b+1] && dist[x][b]+cost[x][i]<=t)
+            {
+                dist[a][b+1]=dist[x][b]+cost[x][i];
+                par[a][b+1]=x;
+                Q.push(node(a,b+1,dist[a][b+1]));
+            }
+        }
+    }
+    return;
+}
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int i,j,u,v;
+    cin>>n>>m>>t;
+    for(i=0; i<m; i++)
     {
-        for(i=0; i<n; i++)
-        {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
-        }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
-        {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
-        }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
-        pr1(ans);
+        iin(u);
+        iin(v);
+        iin(a);
+        edges[u].pb(v);
+        cost[u].pb(a);
     }
+    Dijkstra();
+    for(i=n; i>=1; i--)
+    {
+        if(dist[n][i]==2e9) continue;
+        u=n;
+        v=i;
+        while(u)
+        {
+            out.push_back(u);
+            u=par[u][v];
+            v--;
+        }
+        break;
+    }
+    reverse(out.begin(),out.end());
+    pr1(out.size());
+    for(i=0; i<out.size(); i++)
+    {
+        printf("%d ",out[i]);
+    }
+    nl;
     return 0;
 }

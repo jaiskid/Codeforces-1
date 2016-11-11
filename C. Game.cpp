@@ -93,51 +93,69 @@ int dky8[]= {2,2,-2,-2,1,-1,1,-1};
 int tc=1;
 const double eps=1e-9;
 const double pi=acos(-1.0);
-const long long int mx=1e5;
+const long long int mx=200;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+bool check[mx+5][mx+5];
+int comp[mx+5];
+bool done[mx+5];
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int i,j,k,n,cnt,a,device,ans,mini_ans;
+    bool flag,next;
+    cin>>n;
+    for(i=1; i<=n; i++) iin(comp[i]);
+    cnt=0;
+    device=3;
+    for(i=1; i<=n; i++)
     {
-        for(i=0; i<n; i++)
+        iin(k);
+        for(j=1; j<=k; j++)
         {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
+            iin(a);
+            check[i][a]=true;
         }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
-        {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
-        }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
-        pr1(ans);
     }
+    mini_ans=INT_MAX;
+    for(k=1; k<=3; k++)
+    {
+        cnt=0;
+        ans=0;
+        device=k;
+        setzero(done);
+        while(cnt<n)
+        {
+            next=true;
+            for(i=1; i<=n && cnt<n; i++)
+            {
+                if(comp[i]==device && !done[i])
+                {
+                    flag=true;
+                    for(j=1; j<=n; j++)
+                    {
+                        if(check[i][j] && !done[j])
+                        {
+                            flag=false;
+                            break;
+                        }
+                    }
+                    if(flag)
+                    {
+                        done[i]=true;
+                        next=false;
+                        cnt++;
+                        ans++;
+                        break;
+                    }
+                }
+            }
+            if(next) device++,ans++;
+            if(device>3) device=1;
+        }
+        mini_ans=min(mini_ans,ans);
+    }
+    pr1(mini_ans);
     return 0;
 }

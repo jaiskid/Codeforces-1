@@ -93,50 +93,73 @@ int dky8[]= {2,2,-2,-2,1,-1,1,-1};
 int tc=1;
 const double eps=1e-9;
 const double pi=acos(-1.0);
-const long long int mx=1e5;
+const long long int mx=50;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+string str[mx+5];
+bool visited[mx+5][mx+5];
+int n,m,total,cnt,ans;
+
+void dfs(int x, int y)
+{
+    int i,nx,ny;
+    visited[x][y]=true;
+    cnt++;
+    for(i=0; i<4; i++)
+    {
+        nx=x+dx4[i];
+        ny=y+dy4[i];
+        if(nx>=0 && ny>=0 && nx<n && ny<m && !visited[nx][ny] && str[nx][ny]=='#')
+        {
+            dfs(nx,ny);
+        }
+    }
+    return;
+}
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int i,j,k,nx,ny;
+    bool flag;
+    while(cin>>n>>m)
     {
+        for(i=0; i<n; i++) cin>>str[i];
+        total=0;
         for(i=0; i<n; i++)
         {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
+            for(j=0; j<m; j++) total+=(str[i][j]=='#');
         }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
+        ans=2;
+        for(i=0; i<n; i++)
         {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
+            for(j=0; j<m; j++)
+            {
+                if(str[i][j]=='#')
+                {
+                    for(k=0; k<4; k++)
+                    {
+                        nx=i+dx4[k];
+                        ny=j+dy4[k];
+                        if(nx>=0 && ny>=0 && nx<n && ny<m && str[nx][ny]=='#')
+                        {
+                            setzero(visited);
+                            cnt=0;
+                            visited[i][j]=true;
+                            dfs(nx,ny);
+                            if(cnt+1<total)
+                            {
+                                ans=1;
+                                break;
+                            }
+                        }
+                    }
+                    if(k<4) break;
+                }
+            }
+            if(j<m) break;
         }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
+        if(total<=2) ans=-1;
         pr1(ans);
     }
     return 0;

@@ -93,51 +93,114 @@ int dky8[]= {2,2,-2,-2,1,-1,1,-1};
 int tc=1;
 const double eps=1e-9;
 const double pi=acos(-1.0);
-const long long int mx=1e5;
+const long long int mx=3e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+string outs;
+char str[mx+5];
+int sum[mx+5];
+map<char,int>mp;
+set<int>s;
+set<int>::iterator it;
+
+void build(int node, int beg, int end)
+{
+    if(beg==end)
+    {
+        sum[node]=1;
+        return;
+    }
+    int mid=(beg+end)/2;
+    int l=2*node;
+    int r=2*node+1;
+    build(l,beg,mid);
+    build(r,mid+1,end);
+    sum[node]=sum[l]+sum[r];
+    return;
+}
+
+void update(int node, int beg, int end, int i)
+{
+    if(i>end || i<beg) return;
+    if(beg==end)
+    {
+        sum[node]=0;
+        return;
+    }
+    int mid=(beg+end)/2;
+    int l=2*node;
+    int r=2*node+1;
+    update(l,beg,mid,i);
+    update(r,mid+1,end,i);
+    sum[node]=sum[l]+sum[r];
+    return;
+}
+
+int query(int node, int beg, int end, int i, int j)
+{
+    if(i>end || j<beg) return 0;
+    if(beg>=i && end<=j) return sum[node];
+    int mid=(beg+end)/2;
+    int l=2*node;
+    int r=2*node+1;
+    return query(l,beg,mid,i,j)+query(r,mid+1,end,i,j);
+}
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int i,n,k,a,b,c,d;
+    char ch;
+    bool flag;
+    while(scanf("%d %s",&k,str+1)!=EOF)
     {
-        for(i=0; i<n; i++)
+        n=strlen(str+1);
+        build(1,1,n);
+        flag=true;
+        for(i=1; i<=n; i++) mp[str[i]]++,s.insert(i);
+        s.insert(0);
+        s.insert(n+1);
+        for(ch='z'; ch>='a'; ch--)
         {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
+            for(i=1; i<=n; i++)
+            {
+                if(str[i]!=ch) continue;
+                if(i+k-1>n) a=n-k+1,b=n;
+                else a=i,b=i+k-1;
+                c=query(1,1,n,a,b);
+                if(i-k+1<1) a=1,b=k;
+                else a=i-k+1,b=i;
+                d=query(1,1,n,a,b);
+                it=s.find(i);
+                it--;
+                a=*it;
+                it=s.find(i);
+                it++;
+                b=*it;
+                if(c>1 && d>1 && b-a<=k)
+                {
+                    update(1,1,n,i);
+                    mp[ch]--;
+                    s.erase(s.find(i));
+                }
+                else
+                {
+                    flag=false;
+                }
+            }
+            if(!flag) break;
         }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
+        outs="";
+        for(i=0; i+'a'<=ch; i++)
         {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
+            while(mp[i+'a']>0)
+            {
+                outs+=(i+'a');
+                mp[i+'a']--;
+            }
         }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
-        pr1(ans);
+        pr1(outs);
     }
+
     return 0;
 }

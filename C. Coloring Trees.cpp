@@ -93,51 +93,48 @@ int dky8[]= {2,2,-2,-2,1,-1,1,-1};
 int tc=1;
 const double eps=1e-9;
 const double pi=acos(-1.0);
-const long long int mx=1e5;
+const long long int mx=1e2;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+LL n,m,k;
+LL dp[mx+5][mx+5][mx+5],a[mx+5],table[mx+5][mx+5];
+LL val=1e15;
+
+LL rec(LL i, LL prev_color, LL beauty)
+{
+    if(k==beauty && i>n) return 0;
+    if(k!=beauty && i>n) return val;
+
+    LL &ret=dp[i][prev_color][beauty];
+    if(ret!=-1) return ret;
+
+    LL j,x;
+    ret=val;
+    if(a[i]==0)
+    {
+        for(j=1; j<=m; j++)
+        {
+            x=rec(i+1,j,beauty+(j!=prev_color))+table[i][j];
+            ret=min(ret,x);
+        }
+    }
+    else ret=rec(i+1,a[i],beauty+(a[i]!=prev_color));
+    return ret;
+}
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    LL i,j,ans;
+    cin>>n>>m>>k;
+    for(i=1; i<=n; i++) clin(a[i]);
+    for(i=1; i<=n; i++)
     {
-        for(i=0; i<n; i++)
-        {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
-        }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
-        {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
-        }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
-        pr1(ans);
+        for(j=1; j<=m; j++) clin(table[i][j]);
     }
+    setneg(dp);
+    ans=rec(1,0,0);
+    if(ans>=val) ans=-1;
+    pr1(ans);
     return 0;
 }

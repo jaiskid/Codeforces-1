@@ -97,47 +97,78 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+struct node
+{
+    int val,idx;
+    node(int v, int id)
+    {
+        val=v;
+        idx=id;
+    }
+};
+
+bool operator<(node A, node B)
+{
+    return A.val>B.val;
+}
+
+int a[mx+5];
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    int i,j,k,n;
+    while(cin>>n)
     {
-        for(i=0; i<n; i++)
+        for(i=1; i<=n; i++) iin(a[i]);
+        i=1;
+        while(i<=n)
         {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
+            vector<node>vn;
+            j=i;
+            while(i<=n && a[i])
+            {
+                vn.pb(node(a[i],i));
+                i++;
+            }
+            sort(vn.begin(),vn.end());
+            k=0;
+            while(j<i)
+            {
+                if(vn.size()>0 && vn[0].idx==j)
+                {
+                    k++;
+                    printf("pushStack");
+                }
+                else if(vn.size()>1 && vn[1].idx==j)
+                {
+                    k++;
+                    printf("pushQueue");
+                }
+                else if(vn.size()>2 && vn[2].idx==j)
+                {
+                    k++;
+                    printf("pushFront");
+                }
+                else
+                {
+                    printf("pushBack");
+                }
+                nl;
+                j++;
+            }
+            if(i<=n)
+            {
+                printf("%d",k);
+                for(j=1; j<=k; j++)
+                {
+                    if(j==1) printf(" popStack");
+                    if(j==2) printf(" popQueue");
+                    if(j==3) printf(" popFront");
+                }
+                nl;
+                i++;
+            }
         }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
-        {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
-        }
-        if(left__.size()<=1 && right__.size())
-        {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
-        }
-        if(right__.size()<=1 && left__.size())
-        {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
-        }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
-        {
-            ans=0;
-        }
-        pr1(ans);
     }
     return 0;
 }

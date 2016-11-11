@@ -45,6 +45,7 @@ using namespace std;
 typedef long long LL;
 typedef unsigned long long ULL;
 typedef pair<int, int>pii;
+typedef pair<int, string>pis;
 typedef pair<LL, LL>pll;
 typedef vector<int>vi;
 typedef vector<LL>vll;
@@ -97,47 +98,81 @@ const long long int mx=1e5;
 const long long int mod=1e9+7;
 /* global declarations */
 
-LL a[mx+5],n,x;
-vll left__,right__;
+struct node
+{
+    string name;
+    int height;
+    int taller;
+    node(string ss, int tt)
+    {
+        name=ss;
+        taller=tt;
+    }
+    node()
+    {
+
+    }
+};
+
+bool operator<(node A, node B)
+{
+    return A.taller<B.taller;
+}
 
 int main()
 {
-    LL i,ans;
-    while(cin>>n>>x)
+    char str[100+5];
+    string ss;
+    int i,k,n,a,b,j,idx,cnt,c;
+    bool flag;
+    while(cin>>n)
     {
+        vector<node>vps;
         for(i=0; i<n; i++)
         {
-            clin(a[i]);
-            if(a[i]>x) right__.pb(a[i]-x);
-            if(a[i]<x) left__.pb(x-a[i]);
+            scanf("%s %d",str,&a);
+            ss=str;
+            vps.pb(node(ss,a));
         }
-        sort(left__.begin(),left__.end());
-        sort(right__.begin(),right__.end());
-        ans=1e18;
-        if(left__.size()>1 && right__.size()>1)
+        sort(vps.begin(),vps.end());
+        flag=true;
+        for(i=0; i<n; i++)
         {
-            ans=min(ans,right__[right__.size()-1]*2+left__[left__.size()-2]);
-            ans=min(ans,right__[right__.size()-1]+left__[left__.size()-2]*2);
-            ans=min(ans,right__[right__.size()-2]+left__[left__.size()-1]*2);
-            ans=min(ans,right__[right__.size()-2]*2+left__[left__.size()-1]);
+            k=vps[i].taller;
+            if(k>i)
+            {
+                flag=false;
+                break;
+            }
         }
-        if(left__.size()<=1 && right__.size())
+        if(!flag)
         {
-            if(right__.size()>1 && left__.size()) ans=min(ans,min(right__[right__.size()-2]*2+left__[0],left__[0]*2+right__[right__.size()-2]));
-            if(right__.size() && left__.size()) ans=min(ans,right__[right__.size()-1]);
-            if(right__.size() && !left__.size()) ans=min(ans,right__[right__.size()-2]);
+            pr1(-1);
+            continue;
         }
-        if(right__.size()<=1 && left__.size())
+        for(i=0; i<n; i++) vps[i].height=n-i;
+        for(i=1; i<n; i++)
         {
-            if(left__.size()>1 && right__.size()) ans=min(ans,min(left__[left__.size()-2]*2+right__[0],right__[0]*2+left__[left__.size()-2]));
-            if(left__.size() && right__.size()) ans=min(ans,left__[left__.size()-1]);
-            if(left__.size() && !right__.size()) ans=min(ans,left__[left__.size()-2]);
+            cnt=0;
+            for(j=0; j<i; j++)
+            {
+                if(vps[j].height>vps[i].height) cnt++;
+            }
+            cnt-=vps[i].taller;
+            vi index;
+            b=vps[i].height;
+            c=b;
+            for(j=0;j<i;j++)
+            {
+                a=vps[j].height;
+                if(a>b && a<=b+cnt) vps[j].height=c++;
+            }
+            vps[i].height=c;
         }
-        if((left__.size()==0 && right__.size()==0) || (left__.size()==1 && right__.size()==0) || (left__.size()==0 && right__.size()==1))
+        for(i=0;i<n;i++)
         {
-            ans=0;
+            printf("%s %d\n",vps[i].name.c_str(),vps[i].height);
         }
-        pr1(ans);
     }
     return 0;
 }

@@ -86,14 +86,49 @@ const long long int mod=1e9+7;
 
 int main()
 {
-    string str,out;
-    vector<string>vs;
-    int i,j,n,m,k,cnt;
+    string s1,s2,str;
+    int i,j,n,m,k;
+    bool flag;
     while(cin>>n>>m)
     {
-        vector<pss>vps;
-        for(i=0;i<n;i++) cin>>str,vs.pb(str);
-        for(i=0;i<m;i++) cin>>str>>ss,vs.pb(pss(str,ss));
+        map<string, map<string,bool> >enemies;
+        vector<string>vs,store;
+        cnt=1;
+        for(i=0;i<n;i++)
+        {
+            cin>>str;
+            vs.pb(str);
+        }
+        for(i=0;i<m;i++)
+        {
+            cin>>s1>>s2;
+            enemies[s1][s2]=true;
+            enemies[s2][s1]=true;
+        }
+        for(i=0;i<(1<<n);i++)
+        {
+            vector<string> check;
+            for(j=0;j<n;j++)
+            {
+                if(i & (1<<j)) check.pb(vs[j]);
+            }
+            flag=true;
+            for(j=0;j<check.size() && flag;j++)
+            {
+                for(k=j+1;k<check.size();k++)
+                {
+                    if(enemies[check[j]][check[k]])
+                    {
+                        flag=false;
+                        break;
+                    }
+                }
+            }
+            if(flag && check.size()>store.size()) store=check;
+        }
+        sort(store.begin(),store.end());
+        pr1(store.size());
+        for(i=0;i<store.size();i++) pr1(store[i]);
     }
     return 0;
 }
