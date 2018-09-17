@@ -6,72 +6,78 @@
 /* -------------------------------- */
 
 #include <bits/stdc++.h>
-/* all header files included */
+/* all header files */
 
-#define mod         1000000007
-#define pi          acos(-1.0)
-#define eps         1e-9
+#define fs            first
+#define sc            second
+#define sp            printf(" ")
+#define nl            printf("\n")
+#define pb(a)         push_back(a)
 
-#define fs          first
-#define sc          second
-#define pb(a)       push_back(a)
-#define mp(a,b)     make_pair(a,b)
-#define sp          printf(" ")
-#define nl          printf("\n")
+#define setzero(a)    memset(a,0,sizeof(a))
+#define setneg(a)     memset(a,-1,sizeof(a))
+#define setinf(a)     memset(a,126,sizeof(a))
 
-#define set0(a)     memset(a,0,sizeof(a))
-#define setneg(a)   memset(a,-1,sizeof(a))
-#define setinf(a)   memset(a,126,sizeof(a))
+#define tc1(x)        printf("Case %d: ",x)
+#define tc2(x)        printf("Case #%d: ",x)
+#define tc3(x)        printf("Case %d:\n",x)
+#define tc4(x)        printf("Case #%d:\n",x)
 
-#define tc1(x)      printf("Case %d: ",x)
-#define tc2(x)      printf("Case #%d: ",x)
-#define tc3(x)      printf("Case %d:\n",x)
-#define tc4(x)      printf("Case #%d:\n",x)
+#define iin(x)        scanf("%d",&x)
+#define din(x)        scanf("%lf",&x)
+#define lin(x)        scanf("%lld",&x)
+#define clin(x)       scanf("%I64d",&x)
 
-#define pr1(x)      cout<<x<<"\n"
-#define pr2(x,y)    cout<<x<<" "<<y<<"\n"
-#define pr3(x,y,z)  cout<<x<<" "<<y<<" "<<z<<"\n"
-/* defining macros */
+#define pr1(x)        cout<<x<<"\n"
+#define pr2(x,y)      cout<<x<<" "<<y<<"\n"
+#define pr3(x,y,z)    cout<<x<<" "<<y<<" "<<z<<"\n"
+#define pr4(w,x,y,z)  cout<<w<<" "<<x<<" "<<y<<" "<<z<<"\n"
+#define fast          ios::sync_with_stdio(0)
+#define read          freopen("input.txt","r",stdin)
+#define write         freopen("output.txt","w",stdout)
+#define prflag1(flag) printf("%s\n",(flag)?"YES":"NO")
+#define prflag2(flag) printf("%s\n",(flag)?"Yes":"No")
+#define prflag3(flag) printf("%s\n",(flag)?"yes":"no")
+/* macro definitions */
 
 using namespace std;
-
-template <class T> inline T bigmod(T b, T p, T m)
-{
-    T ret;
-    if(p==0) return 1;
-    if(p&1)
-    {
-        ret=(bigmod(b,p/2,m)%m);
-        return ((b%m)*ret*ret)%m;
-    }
-    else
-    {
-        ret=(bigmod(b,p/2,m)%m);
-        return (ret*ret)%m;
-    }
-}
-template <class T> inline T _sqrt(T a)
-{
-    return (T)sqrt((double)a);
-}
-template <class T, class X> inline T _pow(T a, X b)
-{
-    T res=1;
-    for(int i=1; i<=b; i++)
-        res*=a;
-    return res;
-}
-/* template functions */
 
 typedef long long LL;
 typedef unsigned long long ULL;
 typedef pair<int, int>pii;
 typedef pair<LL, LL>pll;
-typedef pair<double, double>pdd;
 typedef vector<int>vi;
 typedef vector<LL>vll;
-typedef vector<double>vd;
-/* type definition */
+typedef vector<pii>vpii;
+typedef vector<pll>vpll;
+/* type definitions */
+
+LL MOD_EXPO(LL b, LL p, LL m)
+{
+    if(p==0) return 1;
+    LL ret=MOD_EXPO(b,p/2,m)%m;
+    ret=(ret*ret)%m;
+    return ((p&1) ? (ret*b)%m : ret%m);
+}
+LL POWER(LL N, LL K)
+{
+    LL i,ans=1;
+    for(i=1; i<=K; i++) ans*=N;
+    return ans;
+}
+int SET(int N, int pos)
+{
+    return (N | (1<<pos));
+}
+int RESET(int N, int pos)
+{
+    return (N & !(1<<pos));
+}
+bool CHECK(int N, int pos)
+{
+    return (N & (1<<pos));
+}
+/* necessary functions */
 
 int dx4[]= {1,-1,0,0};
 int dy4[]= {0,0,1,-1};
@@ -82,21 +88,40 @@ int dx8[]= {1,-1,0,0,-1,1,-1,1};
 int dy8[]= {0,0,1,-1,1,1,-1,-1};
 int dkx8[]= {-1,1,-1,1,-2,-2,2,2};
 int dky8[]= {2,2,-2,-2,1,-1,1,-1};
-/* direction array */
+/* direction arrays */
 
 int tc=1;
-const long long int mx=100000;
-/* global declaration */
+const double eps=1e-9;
+const double pi=acos(-1.0);
+const long long int mx=1e6;
+const long long int mod=1e9+7;
+/* global declarations */
+
+int arr[mx+5];
 
 int main()
 {
-    LL n,a;
-    while(cin>>n)
+    int i,n,k,mini,cnt,pos,j;
+    while(cin>>n>>k)
     {
-        a=1;
-        while(n%a==0)
-            a=a*3;
-        pr1(n/a+1);
+        if(n<k*3)
+        {
+            pr1(-1);
+            continue;
+        }
+        mini=n/k;
+        for(i=1; i<=k; i++)
+        {
+            arr[i]=i;
+        }
+        for(i=k+1,pos=1; i<=n; i++,pos++)
+        {
+            j=i;
+            while(j<mini+i-1 && j<=n) arr[j++]=min(pos,k);
+            i=j-1;
+        }
+        for(i=1; i<=n; i++) printf("%d ",arr[i]);
+        nl;
     }
     return 0;
 }

@@ -62,7 +62,7 @@ LL MOD_EXPO(LL b, LL p, LL m)
 LL POWER(LL N, LL K)
 {
     LL i,ans=1;
-    for(i=1;i<=K;i++) ans*=N;
+    for(i=1; i<=K; i++) ans*=N;
     return ans;
 }
 int SET(int N, int pos)
@@ -99,42 +99,37 @@ const long long int mod=1e9+7;
 
 LL a[mx+5];
 
+LL rec(LL begin, LL end, LL cnt)
+{
+    LL i,mini,len,ret,prev;
+
+    len=end-begin+1;
+    mini=INT_MAX;
+
+    for(i=begin; i<=end; i++) mini=min(mini,a[i]);
+
+    ret=0;
+    prev=begin-1;
+    for(i=begin; i<=end; i++)
+    {
+        if(a[i]==mini)
+        {
+            if(prev<i-1) ret+=rec(prev+1,i-1,mini);
+            prev=i;
+        }
+    }
+    if(prev!=end) ret+=rec(prev+1,end,mini);
+
+    return min(ret+mini-cnt,len);
+}
+
 int main()
 {
-    LL n,i,ans,j,mini,k,len;
+    LL n,i;
     while(cin>>n)
     {
-        for(i=1;i<=n;i++) lin(a[i]);
-        ans=0;
-        for(i=1;i<=n;i++)
-        {
-            j=1;
-            while(j<=n)
-            {
-                mini=INT_MAX;
-                k=j;
-                while(j<=n && a[j]>0)
-                {
-                    mini=min(mini,a[j]);
-                    j++;
-                }
-                len=j-k;
-                while(k<j && mini!=INT_MAX && mini<len && len)
-                {
-                    a[k]-=mini;
-                    k++;
-                }
-                while(k<j && mini!=INT_MAX && mini>=len && len)
-                {
-                    a[k]=0;
-                    k++;
-                }
-                if(mini!=INT_MAX && len) ans+=min(mini,len);
-                j++;
-            }
-        }
-        if(ans==679) ans=668;
-        pr1(ans);
+        for(i=1; i<=n; i++) lin(a[i]);
+        pr1(rec(1,n,0));
     }
     return 0;
 }

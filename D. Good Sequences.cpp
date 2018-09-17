@@ -6,14 +6,13 @@
 /* -------------------------------- */
 
 #include <bits/stdc++.h>
-/* all header files included */
+/* all header files */
 
 #define fs            first
 #define sc            second
 #define sp            printf(" ")
 #define nl            printf("\n")
 #define pb(a)         push_back(a)
-#define mp(a,b)       make_pair(a,b)
 
 #define setzero(a)    memset(a,0,sizeof(a))
 #define setneg(a)     memset(a,-1,sizeof(a))
@@ -23,6 +22,11 @@
 #define tc2(x)        printf("Case #%d: ",x)
 #define tc3(x)        printf("Case %d:\n",x)
 #define tc4(x)        printf("Case #%d:\n",x)
+
+#define iin(x)        scanf("%d",&x)
+#define din(x)        scanf("%lf",&x)
+#define lin(x)        scanf("%lld",&x)
+#define clin(x)       scanf("%I64d",&x)
 
 #define pr1(x)        cout<<x<<"\n"
 #define pr2(x,y)      cout<<x<<" "<<y<<"\n"
@@ -34,26 +38,9 @@
 #define prflag1(flag) printf("%s\n",(flag)?"YES":"NO")
 #define prflag2(flag) printf("%s\n",(flag)?"Yes":"No")
 #define prflag3(flag) printf("%s\n",(flag)?"yes":"no")
-/* defining macros */
+/* macro definitions */
 
 using namespace std;
-
-template <class T> inline T bigmod(T b, T p, T m)
-{
-    T ret;
-    if(p==0) return 1;
-    if(p&1)
-    {
-        ret=(bigmod(b,p/2,m)%m);
-        return ((b%m)*ret*ret)%m;
-    }
-    else
-    {
-        ret=(bigmod(b,p/2,m)%m);
-        return (ret*ret)%m;
-    }
-}
-/* template functions */
 
 typedef long long LL;
 typedef unsigned long long ULL;
@@ -63,7 +50,34 @@ typedef vector<int>vi;
 typedef vector<LL>vll;
 typedef vector<pii>vpii;
 typedef vector<pll>vpll;
-/* type definition */
+/* type definitions */
+
+LL MOD_EXPO(LL b, LL p, LL m)
+{
+    if(p==0) return 1;
+    LL ret=MOD_EXPO(b,p/2,m)%m;
+    ret=(ret*ret)%m;
+    return ((p&1) ? (ret*b)%m : ret%m);
+}
+LL POWER(LL N, LL K)
+{
+    LL i,ans=1;
+    for(i=1; i<=K; i++) ans*=N;
+    return ans;
+}
+int SET(int N, int pos)
+{
+    return (N | (1<<pos));
+}
+int RESET(int N, int pos)
+{
+    return (N & !(1<<pos));
+}
+bool CHECK(int N, int pos)
+{
+    return (N & (1<<pos));
+}
+/* necessary functions */
 
 int dx4[]= {1,-1,0,0};
 int dy4[]= {0,0,1,-1};
@@ -74,53 +88,50 @@ int dx8[]= {1,-1,0,0,-1,1,-1,1};
 int dy8[]= {0,0,1,-1,1,1,-1,-1};
 int dkx8[]= {-1,1,-1,1,-2,-2,2,2};
 int dky8[]= {2,2,-2,-2,1,-1,1,-1};
-/* direction array */
+/* direction arrays */
 
 int tc=1;
 const double eps=1e-9;
 const double pi=acos(-1.0);
 const long long int mx=1e5;
 const long long int mod=1e9+7;
-/* global declaration */
+/* global declarations */
 
-int a;
-vi vecs[mx+5];
+vi factors[mx+5];
+int x[mx+5];
+int dp[mx+5];
+
+void sieve(void)
+{
+    int i,j;
+    for(i=2; i<=mx; i++)
+    {
+        if(!x[i])
+        {
+            factors[i].pb(i);
+            for(j=i+i; j<=mx; j+=i) x[j]=1,factors[j].pb(i);
+        }
+    }
+    return;
+}
 
 int main()
 {
-    int i,n,j,k,len=0,gcd=0,ans;
-    bool flag;
-    cin>>n;
-    for(i=1; i<=n; i++)
+    int i,n,a,maxi;
+    sieve();
+    while(cin>>n)
     {
-        scanf("%d",&a);
-        flag=false;
-        for(j=0; j<len; j++)
+        setzero(dp);
+        while(n--)
         {
-            k=vecs[j].size();
-            if(k)
-            {
-                gcd=__gcd(a,vecs[j][k-1]);
-                if(gcd>1)
-                {
-                    vecs[j].pb(a);
-                    flag=true;
-                }
+            iin(a);
+            maxi=0;
+            for(i=0; i<factors[a].size(); i++) maxi=max(maxi,dp[factors[a][i]]);
+            for(i=0; i<factors[a].size(); i++) dp[factors[a][i]]=maxi+1;
             }
-        }
-        if(!flag)
-        {
-            vecs[len].pb(a);
-            len++;
-        }
+        maxi=1;
+        for(i=2; i<=mx; i++) maxi=max(maxi,dp[i]);
+        pr1(maxi);
     }
-    ans=0;
-    for(i=0; i<len; i++)
-    {
-        k=vecs[i].size();
-        ans=max(ans,k);
-    }
-
-    pr1(ans);
     return 0;
 }

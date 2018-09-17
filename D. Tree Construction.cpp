@@ -6,14 +6,13 @@
 /* -------------------------------- */
 
 #include <bits/stdc++.h>
-/* all header files included */
+/* all header files */
 
 #define fs            first
 #define sc            second
 #define sp            printf(" ")
 #define nl            printf("\n")
 #define pb(a)         push_back(a)
-#define mp(a,b)       make_pair(a,b)
 
 #define setzero(a)    memset(a,0,sizeof(a))
 #define setneg(a)     memset(a,-1,sizeof(a))
@@ -23,6 +22,11 @@
 #define tc2(x)        printf("Case #%d: ",x)
 #define tc3(x)        printf("Case %d:\n",x)
 #define tc4(x)        printf("Case #%d:\n",x)
+
+#define iin(x)        scanf("%d",&x)
+#define din(x)        scanf("%lf",&x)
+#define lin(x)        scanf("%lld",&x)
+#define clin(x)       scanf("%I64d",&x)
 
 #define pr1(x)        cout<<x<<"\n"
 #define pr2(x,y)      cout<<x<<" "<<y<<"\n"
@@ -34,26 +38,9 @@
 #define prflag1(flag) printf("%s\n",(flag)?"YES":"NO")
 #define prflag2(flag) printf("%s\n",(flag)?"Yes":"No")
 #define prflag3(flag) printf("%s\n",(flag)?"yes":"no")
-/* defining macros */
+/* macro definitions */
 
 using namespace std;
-
-template <class T> inline T bigmod(T b, T p, T m)
-{
-    T ret;
-    if(p==0) return 1;
-    if(p&1)
-    {
-        ret=(bigmod(b,p/2,m)%m);
-        return ((b%m)*ret*ret)%m;
-    }
-    else
-    {
-        ret=(bigmod(b,p/2,m)%m);
-        return (ret*ret)%m;
-    }
-}
-/* template functions */
 
 typedef long long LL;
 typedef unsigned long long ULL;
@@ -63,7 +50,34 @@ typedef vector<int>vi;
 typedef vector<LL>vll;
 typedef vector<pii>vpii;
 typedef vector<pll>vpll;
-/* type definition */
+/* type definitions */
+
+LL MOD_EXPO(LL b, LL p, LL m)
+{
+    if(p==0) return 1;
+    LL ret=MOD_EXPO(b,p/2,m)%m;
+    ret=(ret*ret)%m;
+    return ((p&1) ? (ret*b)%m : ret%m);
+}
+LL POWER(LL N, LL K)
+{
+    LL i,ans=1;
+    for(i=1;i<=K;i++) ans*=N;
+    return ans;
+}
+int SET(int N, int pos)
+{
+    return (N | (1<<pos));
+}
+int RESET(int N, int pos)
+{
+    return (N & !(1<<pos));
+}
+bool CHECK(int N, int pos)
+{
+    return (N & (1<<pos));
+}
+/* necessary functions */
 
 int dx4[]= {1,-1,0,0};
 int dy4[]= {0,0,1,-1};
@@ -74,74 +88,45 @@ int dx8[]= {1,-1,0,0,-1,1,-1,1};
 int dy8[]= {0,0,1,-1,1,1,-1,-1};
 int dkx8[]= {-1,1,-1,1,-2,-2,2,2};
 int dky8[]= {2,2,-2,-2,1,-1,1,-1};
-/* direction array */
+/* direction arrays */
 
 int tc=1;
 const double eps=1e-9;
 const double pi=acos(-1.0);
 const long long int mx=1e5;
 const long long int mod=1e9+7;
-/* global declaration */
-
-
-LL k;
-struct node
-{
-    LL data,parent;
-    node *left;
-    node *right;
-};
-
-node *new_node(LL data, LL parent)
-{
-    node *child=new node;
-    child->data=data;
-    child->parent=parent;
-    child->left=child->right=NULL;
-
-    return child;
-}
-
-node *insert_node(node *child, LL data, LL parent)
-{
-    if(child==NULL)
-    {
-        node *child=new_node(data,parent);
-        k=child->parent;
-        return child;
-    }
-
-    if(data < child->data) child->left=insert_node(child->left,data,child->data);
-    else child->right=insert_node(child->right,data,child->data);
-
-    return child;
-}
-
-void delete_tree(node *child)
-{
-    if(child==NULL) return;
-    delete_tree(child->left);
-    delete_tree(child->right);
-    delete child;
-}
+/* global declarations */
 
 int main()
 {
-    LL n,a,i;
+    int n,a,b,parent;
     while(cin>>n>>a)
     {
-        node *root=NULL;
-        node *child=NULL;
-        root=insert_node(root,a,0);
-        for(i=1; i<n; i++)
+        set<int>s;
+        set<int>::iterator it;
+        map<int,bool>left_child;
+        map<int,bool>right_child;
+        s.insert(a);
+        n--;
+        while(n--)
         {
-            scanf("%lld",&a);
-            child=insert_node(root,a,0);
-            printf("%lld ",k);
+            iin(a);
+            it=s.upper_bound(a);
+            if(it!=s.end() && !left_child[*it])
+            {
+                parent=*it;
+                left_child[parent]=true;
+            }
+            else
+            {
+                it--;
+                parent=*it;
+                right_child[parent]=true;
+            }
+            s.insert(a);
+            printf("%d ",parent);
         }
         nl;
-        delete_tree(root);
-        delete child;
     }
     return 0;
 }
